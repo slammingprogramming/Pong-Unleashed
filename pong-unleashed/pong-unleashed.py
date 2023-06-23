@@ -1,5 +1,6 @@
 import pygame
 from pygame.locals import *
+import random
 
 # Initialize Pygame
 pygame.init()
@@ -27,6 +28,14 @@ ball_x_speed = 3
 ball_y_speed = 3
 ball = pygame.Rect(window_width // 2 - ball_radius // 2, window_height // 2 - ball_radius // 2, ball_radius, ball_radius)
 
+# Set up game mode
+player_vs_player = False  # Change to True for player vs player mode
+
+# Set up CPU paddle
+cpu_paddle_speed = 3
+cpu_paddle_movement_delay = 30
+cpu_paddle_movement_counter = 0
+
 clock = pygame.time.Clock()
 
 while True:
@@ -37,15 +46,28 @@ while True:
 
     keys = pygame.key.get_pressed()
 
-    # Move the paddles
+    # Move the paddles (Player 1 controls)
     if keys[K_w] and left_paddle.y > 0:
         left_paddle.y -= paddle_speed
     if keys[K_s] and left_paddle.y < window_height - paddle_height:
         left_paddle.y += paddle_speed
-    if keys[K_UP] and right_paddle.y > 0:
-        right_paddle.y -= paddle_speed
-    if keys[K_DOWN] and right_paddle.y < window_height - paddle_height:
-        right_paddle.y += paddle_speed
+
+    if player_vs_player:
+        # Move the paddles (Player 2 controls)
+        if keys[K_UP] and right_paddle.y > 0:
+            right_paddle.y -= paddle_speed
+        if keys[K_DOWN] and right_paddle.y < window_height - paddle_height:
+            right_paddle.y += paddle_speed
+    else:
+        # Move the CPU paddle (Player 2 controlled by CPU)
+        if cpu_paddle_movement_counter >= cpu_paddle_movement_delay:
+            if ball.y < right_paddle.y:
+                right_paddle.y -= cpu_paddle_speed
+            if ball.y > right_paddle.y + paddle_height:
+                right_paddle.y += cpu_paddle_speed
+            cpu_paddle_movement_counter = 0
+        else:
+            cpu_paddle_movement_counter += 1
 
     # Move the ball
     ball.x += ball_x_speed
