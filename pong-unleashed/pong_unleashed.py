@@ -5,6 +5,7 @@ from pygame.locals import *
 import sys
 import select
 import random
+import threading
 
 # Initialize Pygame
 pygame.init()
@@ -37,6 +38,7 @@ HOST = socket.gethostbyname(socket.gethostname())  # Get the host name
 PORT = 12345  # Choose a port number
 server_socket = None
 client_socket = None
+host_socket = None
 is_host = None
 
 # Set up game state synchronization
@@ -57,9 +59,11 @@ def start_server():
     server_socket.listen(1)
     is_host = True
 
-    client_socket, client_address = server_socket.accept()
+def listen_for_clients():
+    global host_socket
+    host_socket, client_address = server_socket.accept()
 
-def join_server(server_ip):
+def join_server(server_ip, PORT):
     global client_socket, is_host
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client_socket.connect((server_ip, PORT))
@@ -67,13 +71,13 @@ def join_server(server_ip):
 
 def send_data(data):
     if is_host:
-        server_socket.sendall(pickle.dumps(data))
+        host_socket.sendall(pickle.dumps(data))
     else:
         client_socket.sendall(pickle.dumps(data))
 
 def receive_data():
     if is_host:
-        data = server_socket.recv(4096)
+        data = host_socket.recv(4096)
     else:
         data = client_socket.recv(4096)
     return pickle.loads(data)
@@ -168,6 +172,16 @@ else:
     print("Invalid choice. Exiting the game.")
     exit()
 
+if game_mode == "online" and is_host:
+    start_server()
+    listen_thread = threading.Thread(target=listen_for_clients)
+    listen_thread.start()
+    print("Waiting for client to connect...")
+
+    # Wait until a client has connected
+    listen_thread.join()
+    print("Client connected!")
+
 # Non-blocking receive function
 def non_blocking_receive(socket_obj):
     ready = select.select([socket_obj], [], [], 0.01)
@@ -256,6 +270,7 @@ while True:
         if event.type == QUIT:
             if is_host and game_mode == "online":
                 server_socket.close()
+                host_socket.close()
             elif not is_host and game_mode == "online":
                 client_socket.close()
             else:
@@ -271,17 +286,30 @@ while True:
         keys = pygame.key.get_pressed()
 
     # Move the paddles (Player 1 controls)
-    if keys[K_w] and left_paddle.y > 0:
-        left_paddle.y -= paddle_speed
-    if keys[K_s] and left_paddle.y < window_height - paddle_height:
-        left_paddle.y += paddle_speed
+    if game_mode != "online" or (game_mode == "online" and is_host):
+        if keys[K_w] and left_paddle.y > 0:
+            left_paddle.y -= paddle_speed
+            game_state["left_paddle"] = left_paddle
+            if game_mode == "online":
+                send_data(game_state)
+        if keys[K_s] and left_paddle.y < window_height - paddle_height:
+            left_paddle.y += paddle_speed
+            game_state["left_paddle"] = left_paddle
+            if game_mode == "online":
+                send_data(game_state)
 
-    if game_mode == "local_multiplayer":
+    if game_mode == "local_multiplayer" or (game_mode == "online" and not is_host):
         # Move the paddles (Player 2 controls)
         if keys[K_UP] and right_paddle.y > 0:
             right_paddle.y -= paddle_speed
+            game_state["right_paddle"] = right_paddle
+            if game_mode == "online":
+                send_data(game_state)  # send updated game_state to server
         if keys[K_DOWN] and right_paddle.y < window_height - paddle_height:
             right_paddle.y += paddle_speed
+            game_state["right_paddle"] = right_paddle
+            if game_mode == "online":
+                send_data(game_state)  # send updated game_state to server
     elif game_mode == "vs_cpu":
         # Move the CPU paddle (Player 2 controlled by CPU)
         move_cpu_paddle(difficulty_level)
@@ -306,11 +334,16 @@ while True:
     game_state["left_paddle"] = left_paddle
     game_state["right_paddle"] = right_paddle
     game_state["ball"] = ball
+    if is_host and game_mode == "online":
+        send_data(game_state)
 
     if game_mode == "online":
         try:
-            send_data(game_state)
-            received_data = non_blocking_receive(server_socket if is_host else client_socket)
+            if is_host:
+                received_data = non_blocking_receive(host_socket)
+            else:
+                received_data = non_blocking_receive(client_socket)
+
             if received_data:
                 game_state = pickle.loads(received_data)
                 left_paddle = game_state["left_paddle"]
