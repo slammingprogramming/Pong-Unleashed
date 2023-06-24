@@ -96,6 +96,19 @@ if mode == "1":
     game_mode = "local_multiplayer"
 elif mode == "2":
     game_mode = "vs_cpu"
+    print("Select Difficulty Level:")
+    print("1. Easy")
+    print("2. Medium")
+    print("3. Hard")
+    difficulty = input("Enter your choice (1-3): ")
+    if difficulty == "1":
+        paddle_speed = 3
+    elif difficulty == "2":
+        paddle_speed = 5
+    elif difficulty == "3":
+        paddle_speed = 7
+    else:
+        print("Invalid choice. Using medium difficulty.")
 elif mode == "3":
     game_mode = "online"
     start_server()
