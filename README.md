@@ -140,8 +140,6 @@ Enjoy playing Pong Unleashed with your friends online!
 -fix issue with screen not clearing whenn navigating menus
 -fix issue with server hosting where invalid port is displayed even when a valid port is available. Also, add the default port to screen text and allow user to just leave it blank to go to default.
 -Fix the same issue and add the same default functionality to join game
- -Fix issue with VS CPU menu that prevents progression.
-
 
 ## License
 

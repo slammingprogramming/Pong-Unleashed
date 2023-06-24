@@ -46,17 +46,17 @@ errorColor = pygame.Color(255, 0, 0)
 # Player 1 paddle settings
 paddle_width_left = 10
 paddle_height_left = 60
-paddle_speed_left = 5
+paddle_speed_left = 8
 
 # Player 2 paddle settings
 paddle_width_right = 10
 paddle_height_right = 60
-paddle_speed_right = 5
+paddle_speed_right = 8
 
 # Ball settings
 ball_radius = 10
-ball_x_speed = 3
-ball_y_speed = 3
+ball_x_speed = random.randint(1, 10)
+ball_y_speed = random.randint(1, 10)
 
 # Define characteristics of paddles and ball
 left_paddle = pygame.Rect(50, window_height // 2 - paddle_height_left // 2, paddle_width_left, paddle_height_left)
@@ -371,14 +371,14 @@ def main():  # Define main
                             safe_exit()
         if game_mode == "vs_cpu":
             font = pygame.font.Font(None, 36)
+            window.fill(bgColor)
             option_texts = [
-                "1. Easy - The CPU paddle follows the ball with random delay (3 to 10 seconds)",
-                "2. Medium - The CPU paddle tracks the ball with some delay.",
-                "3. Hard - The CPU paddle tracks the ball accurately.",
-                "4. Advanced - The CPU paddle predicts the ball's movement.",
-                "5. Expert - The CPU paddle actively attempts shots to challenge the player.",
-                "6. Impossible - The CPU paddle took six adderall about an hour ago.",
-                "Enter difficulty level (1-6): "
+                "Easy - The CPU paddle follows the ball with random delay (3 to 10 seconds)",
+                "Medium - The CPU paddle tracks the ball with some delay.",
+                "Hard - The CPU paddle tracks the ball accurately.",
+                "Advanced - The CPU paddle predicts the ball's movement.",
+                "Expert - The CPU paddle actively attempts shots to challenge the player.",
+                "Impossible - The CPU paddle took six adderall about an hour ago.",
             ]
             text_y = 100
             for i, option_texts in enumerate(option_texts):
@@ -400,10 +400,13 @@ def main():  # Define main
                         if event.unicode in valid_options:
                             global difficulty_level
                             selected_option = event.unicode
-                            difficulty_level = selected_option
-                            if int(difficulty_level) < 1 or int(difficulty_level) > 6:
+                            difficulty_level = int(selected_option)
+                            if difficulty_level < 1 or difficulty_level > 6:
                                 print("Invalid difficulty level stored, unable to proceed.")
                                 safe_exit()
+                            else:
+                                global inGame
+                                inGame = True
                         else:
                             error_text = font.render("Invalid option. Please enter a valid option.", True, errorColor)
                             error_rect = error_text.get_rect(center=(window_width // 2, 400))
