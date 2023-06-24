@@ -48,59 +48,6 @@ game_state = {
 
 clock = pygame.time.Clock()
 
-# Power-up variables
-power_up_duration = 5  # Duration of power-up effects in seconds
-power_up_timer = 0  # Timer for power-up duration
-power_up_active = False  # Flag indicating if a power-up is active
-power_up_rect = pygame.Rect(0, 0, 20, 20)  # Rect for power-up appearance
-power_up_speed_increase = 2  # Speed increase for paddle power-up
-power_up_size_increase = 20  # Size increase for paddle power-up
-
-# Power-up types
-POWER_UP_TYPES = [
-    "Paddle Size Increase",
-    "Paddle Speed Increase"
-]
-
-# Function to activate a random power-up
-def activate_power_up():
-    global power_up_active, power_up_timer, power_up_rect
-
-    # Randomly select a power-up type
-    power_up_type = random.choice(POWER_UP_TYPES)
-
-    # Set power-up attributes based on type
-    if power_up_type == "Paddle Size Increase":
-        power_up_rect = pygame.Rect(0, 0, power_up_size_increase, power_up_size_increase)
-        power_up_rect.center = (window_width // 2, window_height // 2)
-        power_up_active = True
-        power_up_timer = power_up_duration
-        left_paddle.height += power_up_size_increase
-        right_paddle.height += power_up_size_increase
-    elif power_up_type == "Paddle Speed Increase":
-        power_up_rect = pygame.Rect(0, 0, power_up_size_increase, power_up_size_increase)
-        power_up_rect.center = (window_width // 2, window_height // 2)
-        power_up_active = True
-        power_up_timer = power_up_duration
-        left_paddle.y -= power_up_speed_increase
-        right_paddle.y -= power_up_speed_increase
-
-# Function to deactivate the active power-up
-def deactivate_power_up():
-    global power_up_active, power_up_timer
-
-    # Check if power-up is active
-    if power_up_active:
-        power_up_active = False
-        power_up_timer = 0
-
-        # Reset paddle attributes if affected by power-up
-        left_paddle.height = paddle_height
-        right_paddle.height = paddle_height
-        left_paddle.y += power_up_speed_increase
-        right_paddle.y += power_up_speed_increase
-
-# Start the server
 def start_server():
     global server_socket, is_host
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -108,21 +55,18 @@ def start_server():
     server_socket.listen(1)
     is_host = True
 
-# Join the server
 def join_server(server_ip):
     global client_socket, is_host
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client_socket.connect((server_ip, PORT))
     is_host = False
 
-# Send data over the network
 def send_data(data):
     if is_host:
         client_socket.sendall(pickle.dumps(data))
     else:
         client_socket.sendall(pickle.dumps(data))
 
-# Receive data over the network
 def receive_data():
     if is_host:
         data = server_socket.recv(4096)
@@ -130,7 +74,6 @@ def receive_data():
         data = client_socket.recv(4096)
     return pickle.loads(data)
 
-# Reset the game state
 def reset_game():
     global left_paddle, right_paddle, ball, ball_x_speed, ball_y_speed
     left_paddle = pygame.Rect(50, window_height // 2 - paddle_height // 2, paddle_width, paddle_height)
@@ -272,34 +215,22 @@ while True:
     if game_mode == "online":
         try:
             send_data(game_state)
-            received_state = receive_data()
-            if received_state:
-                left_paddle = received_state["left_paddle"]
-                right_paddle = received_state["right_paddle"]
-                ball = received_state["ball"]
-        except:
-            print("Connection lost. Exiting the game.")
-            pygame.quit()
-            sys.exit()
+            received_data = non_blocking_receive(server_socket if is_host else client_socket)
+            if received_data:
+                game_state = pickle.loads(received_data)
+                left_paddle = game_state["left_paddle"]
+                right_paddle = game_state["right_paddle"]
+                ball = game_state["ball"]
+        except socket.error as e:
+            print("Socket error:", e)
+            break
 
-    # Power-up logic
-    if not power_up_active:
-        if random.randint(0, 500) == 0:  # Random chance for power-up appearance
-            activate_power_up()
-
-    if power_up_active:
-        power_up_timer -= 1
-        if power_up_timer <= 0:
-            deactivate_power_up()
-
-    # Draw the game elements
+    # Draw the game objects
     window.fill(BLACK)
     pygame.draw.rect(window, WHITE, left_paddle)
     pygame.draw.rect(window, WHITE, right_paddle)
     pygame.draw.ellipse(window, WHITE, ball)
-
-    if power_up_active:
-        pygame.draw.rect(window, WHITE, power_up_rect)
+    pygame.draw.aaline(window, WHITE, (window_width // 2, 0), (window_width // 2, window_height))
 
     # Update the display
     pygame.display.update()
