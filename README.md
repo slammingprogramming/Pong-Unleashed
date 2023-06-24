@@ -1,4 +1,5 @@
 # Pong Unleashed
+Latest Version: 0.0.2
 
 Pong Unleashed is a classic pong game implemented in Python using the Pygame library. It offers various game modes, including local multiplayer, single-player against CPU, online multiplayer, and a tutorial mode to help players get familiar with the game mechanics.
 
@@ -23,9 +24,10 @@ To run the game, follow these steps:
 
 1. Make sure you have Python 3.x installed on your system.
 2. Clone this repository or download the source code files.
-3. Install the required dependencies by running the following command:
+3. Install the required dependencies by running the following commands:
    ```
    pip install pygame
+   pip install ipaddress
    ```
 4. Run the game by executing the `pong_unleashed.py` file:
    ```
@@ -129,6 +131,9 @@ Enjoy playing Pong Unleashed with your friends online!
 - Improved security for multiplayer
 - Something RJ wants
 - Something the first person to ask for a feature wants(as long as it's relevant and reasonable, submit via issues.)
+- Ease of use features (Less quitting constantly, more returning to menu.)
+- Fix the litany of bugs currently in v0.0.2
+- QOL adjustments, such as having the ball go one or the other way depending on 1) random chance, 2) the last player to win serves, or 3) other variables i.e. constantly to one or the other side, as well as other things like paddles and window resizability without breaking things
 
 ## License
 
