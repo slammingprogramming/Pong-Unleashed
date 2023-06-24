@@ -105,8 +105,13 @@ elif mode == "2":
     print("1. Easy - The CPU paddle has a moderate chance of missing the ball.")
     print("2. Medium - The CPU paddle has a lower chance of missing the ball.")
     print("3. Hard - The CPU paddle has a very low chance of missing the ball.")
-    print("4. Impossible - The CPU paddle never misses the ball.")
-    difficulty_level = int(input("Enter difficulty level (1-4): "))
+    print("4. Advanced - The CPU paddle uses advanced strategies to avoid losing.")
+    print("5. Expert - The CPU paddle actively attempts shots to challenge the player")
+    print("6. Impossible - The CPU paddle never misses the ball.")
+    difficulty_level = int(input("Enter difficulty level (1-6): "))
+    if difficulty_level < 1 or difficulty_level > 6:
+        print("Invalid difficulty level. Exiting the game.")
+        sys.exit()
 elif mode == "3":
     game_mode = "online"
     port_choice = input("Enter the port to host the server on (default: 12345): ")
@@ -157,6 +162,46 @@ def move_cpu_paddle(difficulty):
             if right_paddle.y < window_height - paddle_height:
                 right_paddle.y += paddle_speed
     elif difficulty == 4:
+        # Advanced difficulty: The CPU paddle uses advanced strategies
+        if ball_x_speed > 0:
+            # Predict the ball's position based on the estimated time of arrival
+            estimated_time = (right_paddle.x - ball.x) // ball_x_speed
+            predicted_y = ball.y + ball_y_speed * estimated_time
+            if predicted_y < right_paddle.y + paddle_height // 2:
+                if right_paddle.y > 0:
+                    right_paddle.y -= paddle_speed
+            elif predicted_y > right_paddle.y + paddle_height // 2:
+                if right_paddle.y < window_height - paddle_height:
+                    right_paddle.y += paddle_speed
+        else:
+            # React to the ball's current position if the ball is moving away
+            if ball.y < right_paddle.y + paddle_height // 2:
+                if right_paddle.y > 0:
+                    right_paddle.y -= paddle_speed
+            elif ball.y > right_paddle.y + paddle_height // 2:
+                if right_paddle.y < window_height - paddle_height:
+                    right_paddle.y += paddle_speed
+    elif difficulty == 5:
+        # Expert difficulty: The CPU paddle actively attempts shots to challenge the player
+        if ball_x_speed > 0:
+            # Predict the ball's position based on the estimated time of arrival
+            estimated_time = (right_paddle.x - ball.x) // ball_x_speed
+            predicted_y = ball.y + ball_y_speed * estimated_time
+            if predicted_y < right_paddle.y + paddle_height // 2:
+                if right_paddle.y > 0:
+                    right_paddle.y -= paddle_speed
+            elif predicted_y > right_paddle.y + paddle_height // 2:
+                if right_paddle.y < window_height - paddle_height:
+                    right_paddle.y += paddle_speed
+        else:
+            # Move the paddle to perform shots that challenge the player
+            if right_paddle.y + paddle_height // 2 < window_height // 2:
+                if right_paddle.y < window_height - paddle_height:
+                    right_paddle.y += paddle_speed
+            elif right_paddle.y + paddle_height // 2 > window_height // 2:
+                if right_paddle.y > 0:
+                    right_paddle.y -= paddle_speed
+    elif difficulty == 6:
         # Impossible difficulty: The CPU paddle never misses the ball
         if ball.y < right_paddle.y + paddle_height // 2:
             if right_paddle.y > 0:

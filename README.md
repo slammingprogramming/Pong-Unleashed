@@ -57,8 +57,6 @@ Multiplayer online matchmaking: Implement an online matchmaking system that allo
 
 High scores and leaderboards: Add a high score system and leaderboards to encourage competition among players and provide a sense of achievement.
 
-AI improvements: Enhance the AI-controlled paddle's behavior by implementing more advanced strategies and decision-making algorithms, making it more challenging and realistic to play against.
-
 Customizable paddle skins: Allow players to choose different paddle skins or even upload their own custom images to personalize their paddles.
 
 Achievements and rewards: Introduce achievements or unlockable rewards for completing specific challenges or reaching milestones within the game.
