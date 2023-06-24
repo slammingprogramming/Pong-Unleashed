@@ -394,6 +394,8 @@ def main():  # Define main
             selected_option = None
             while not selected_option:
                 for event in pygame.event.get():
+                    if event.type == QUIT:
+                        safe_exit()
                     if event.type == KEYDOWN:
                         if event.unicode in valid_options:
                             global difficulty_level
@@ -427,6 +429,8 @@ def main():  # Define main
             while not valid_input:
                 global PORT
                 for event in pygame.event.get():
+                    if event.type == QUIT:
+                        safe_exit()
                     if event.type == KEYDOWN:
                         if event.unicode.isdigit():
                             port_choice += event.unicode
@@ -492,6 +496,8 @@ def main():  # Define main
             port_choice = ""
             while not valid_input:
                 for event in pygame.event.get():
+                    if event.type == QUIT:
+                        safe_exit()
                     if event.type == KEYDOWN:
                         if event.unicode.isdigit():
                             if len(server_ip) < 15:
