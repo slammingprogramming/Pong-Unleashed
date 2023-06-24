@@ -48,6 +48,8 @@ game_state = {
 
 clock = pygame.time.Clock()
 
+paused = False  # Variable to track whether the game is paused or not
+
 def start_server():
     global server_socket, is_host
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -172,6 +174,11 @@ while True:
                 client_socket.close()
             pygame.quit()
             sys.exit()
+        elif event.type == KEYDOWN:
+            if event.key == K_p and game_mode != "online":
+                paused = not paused  # Toggle pause state when 'P' key is pressed
+
+    if not paused:  # Only update game logic if the game is not paused
 
     keys = pygame.key.get_pressed()
 
@@ -231,6 +238,13 @@ while True:
     pygame.draw.rect(window, WHITE, right_paddle)
     pygame.draw.ellipse(window, WHITE, ball)
     pygame.draw.aaline(window, WHITE, (window_width // 2, 0), (window_width // 2, window_height))
+
+    # Draw pause message if the game is paused
+    if paused:
+        font = pygame.font.Font(None, 36)
+        text = font.render("Paused", True, WHITE)
+        text_rect = text.get_rect(center=(window_width // 2, window_height // 2))
+        window.blit(text, text_rect)
 
     # Update the display
     pygame.display.update()

@@ -34,6 +34,8 @@ A revitalized version of the classic game "Pong" using Python and Pygame library
 
 Please note that the online multiplayer feature uses a simple host/join system and may not work in all network configurations. Ensure that your network allows incoming connections on the specified port (default: 12345) and that the necessary firewall settings are in place.
 
+ you can pause and resume using the p key when in offline play
+
 ## Planned Improvements
 Implement power-ups: Add power-ups that appear during gameplay and provide temporary advantages or disadvantages to the players, such as increasing paddle size, adding extra balls, or slowing down the opponent's paddle.
 
@@ -58,8 +60,6 @@ High scores and leaderboards: Add a high score system and leaderboards to encour
 AI improvements: Enhance the AI-controlled paddle's behavior by implementing more advanced strategies and decision-making algorithms, making it more challenging and realistic to play against.
 
 Customizable paddle skins: Allow players to choose different paddle skins or even upload their own custom images to personalize their paddles.
-
-Pause and resume functionality: Enable the ability to pause the game and resume it later, allowing players to take breaks or continue their gameplay session at a later time.
 
 Achievements and rewards: Introduce achievements or unlockable rewards for completing specific challenges or reaching milestones within the game.
 
