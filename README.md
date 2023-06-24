@@ -121,6 +121,14 @@ Enjoy playing Pong Unleashed with your friends online!
 - Achievements and rewards: Introduce achievements or unlockable rewards for completing specific challenges or reaching milestones within the game.
 - Support for UPnP for server hosting and matchmaking.
 - Implement server-based multiplayer support and matchmaking.
+- Implement splash screen and GUI
+- Scoring systems
+- Direct connect functionality
+- Settings file
+- Usernames and randomized identifier strings
+- Improved security for multiplayer
+- Something RJ wants
+- Something the first person to ask for a feature wants(as long as it's relevant and reasonable, submit via issues.)
 
 ## License
 
