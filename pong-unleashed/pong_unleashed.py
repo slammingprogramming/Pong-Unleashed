@@ -149,6 +149,7 @@ elif mode == "2":
         sys.exit()
 elif mode == "3":
     game_mode = "online"
+    print("Server will be hosted on: ", HOST)
     port_choice = input("Enter the port to host the server on (default: 12345): ")
     PORT = int(port_choice) if port_choice.isdigit() else PORT
     start_server()
