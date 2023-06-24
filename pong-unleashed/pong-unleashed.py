@@ -1,4 +1,6 @@
 import pygame
+import socket
+import pickle
 from pygame.locals import *
 
 # Initialize Pygame
@@ -27,60 +29,91 @@ ball_x_speed = 3
 ball_y_speed = 3
 ball = pygame.Rect(window_width // 2 - ball_radius // 2, window_height // 2 - ball_radius // 2, ball_radius, ball_radius)
 
-# Set up game mode selection
-game_mode = None
+# Set up networking
+HOST = socket.gethostname()  # Get the host name
+PORT = 12345  # Choose a port number
+server_socket = None
+client_socket = None
+is_host = None
 
-# Set up CPU paddle
-cpu_paddle_speed = 3
-cpu_paddle_movement_delay = 30
-cpu_paddle_movement_counter = 0
+# Set up game state synchronization
+game_state = {
+    "left_paddle": left_paddle,
+    "right_paddle": right_paddle,
+    "ball": ball
+}
 
 clock = pygame.time.Clock()
 
+def start_server():
+    global server_socket, is_host
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.bind((HOST, PORT))
+    server_socket.listen(1)
+    is_host = True
+
+def join_server(server_ip):
+    global client_socket, is_host
+    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client_socket.connect((server_ip, PORT))
+    is_host = False
+
+def send_data(data):
+    if is_host:
+        client_socket.send(pickle.dumps(data))
+    else:
+        server_socket.send(pickle.dumps(data))
+
+def receive_data():
+    if is_host:
+        data = server_socket.recv(4096)
+    else:
+        data = client_socket.recv(4096)
+    return pickle.loads(data)
+
 def reset_game():
-    global game_mode, left_paddle, right_paddle, ball, ball_x_speed, ball_y_speed
-    game_mode = None
+    global left_paddle, right_paddle, ball, ball_x_speed, ball_y_speed
     left_paddle = pygame.Rect(50, window_height // 2 - paddle_height // 2, paddle_width, paddle_height)
     right_paddle = pygame.Rect(window_width - 50 - paddle_width, window_height // 2 - paddle_height // 2, paddle_width, paddle_height)
     ball = pygame.Rect(window_width // 2 - ball_radius // 2, window_height // 2 - ball_radius // 2, ball_radius, ball_radius)
     ball_x_speed = 3
     ball_y_speed = 3
 
-def draw_game_mode_menu():
-    font = pygame.font.Font(None, 36)
-    title_text = font.render("PONG", True, WHITE)
-    local_multiplayer_text = font.render("1. Local Multiplayer", True, WHITE)
-    vs_cpu_text = font.render("2. VS CPU", True, WHITE)
-
-    window.fill(BLACK)
-    window.blit(title_text, (window_width // 2 - title_text.get_width() // 2, 100))
-    window.blit(local_multiplayer_text, (window_width // 2 - local_multiplayer_text.get_width() // 2, 200))
-    window.blit(vs_cpu_text, (window_width // 2 - vs_cpu_text.get_width() // 2, 250))
-
-    pygame.display.update()
-
+# Game setup
 reset_game()
 
+# Game mode selection
+print("Pong Game")
+print("Select Game Mode:")
+print("1. Local Multiplayer")
+print("2. VS CPU")
+print("3. Host")
+print("4. Join")
+
+mode = input("Enter your choice (1-4): ")
+
+if mode == "1":
+    game_mode = "local_multiplayer"
+elif mode == "2":
+    game_mode = "vs_cpu"
+elif mode == "3":
+    game_mode = "online"
+    start_server()
+elif mode == "4":
+    game_mode = "online"
+    server_ip = input("Enter the server IP address: ")
+    join_server(server_ip)
+else:
+    print("Invalid choice. Exiting the game.")
+    exit()
+
 while True:
-    if game_mode is None:
-        draw_game_mode_menu()
-
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                pygame.quit()
-                exit()
-            elif event.type == KEYDOWN:
-                if event.key == K_1:
-                    game_mode = "local_multiplayer"
-                elif event.key == K_2:
-                    game_mode = "vs_cpu"
-                    cpu_paddle_movement_counter = cpu_paddle_movement_delay // 2
-
-        clock.tick(60)
-        continue
-
     for event in pygame.event.get():
         if event.type == QUIT:
+            if is_host:
+                server_socket.close()
+            else:
+                client_socket.close()
             pygame.quit()
             exit()
 
@@ -100,14 +133,10 @@ while True:
             right_paddle.y += paddle_speed
     elif game_mode == "vs_cpu":
         # Move the CPU paddle (Player 2 controlled by CPU)
-        if cpu_paddle_movement_counter >= cpu_paddle_movement_delay:
-            if ball.y < right_paddle.y:
-                right_paddle.y -= cpu_paddle_speed
-            if ball.y > right_paddle.y + paddle_height:
-                right_paddle.y += cpu_paddle_speed
-            cpu_paddle_movement_counter = 0
-        else:
-            cpu_paddle_movement_counter += 1
+        if ball.y < right_paddle.y:
+            right_paddle.y -= paddle_speed
+        if ball.y > right_paddle.y + paddle_height:
+            right_paddle.y += paddle_speed
 
     # Move the ball
     ball.x += ball_x_speed
@@ -124,6 +153,18 @@ while True:
     # Check if the ball is out of bounds
     if ball.x < 0 or ball.x > window_width:
         reset_game()
+
+    # Synchronize game state
+    game_state["left_paddle"] = left_paddle
+    game_state["right_paddle"] = right_paddle
+    game_state["ball"] = ball
+
+    if game_mode == "online":
+        send_data(game_state)
+        game_state = receive_data()
+        left_paddle = game_state["left_paddle"]
+        right_paddle = game_state["right_paddle"]
+        ball = game_state["ball"]
 
     # Draw the game objects
     window.fill(BLACK)
