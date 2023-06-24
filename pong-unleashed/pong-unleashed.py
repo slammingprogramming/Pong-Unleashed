@@ -43,10 +43,7 @@ is_host = None
 game_state = {
     "left_paddle": left_paddle,
     "right_paddle": right_paddle,
-    "ball": ball,
-    "power_up_active": power_up_active,
-    "power_up_rect": power_up_rect,
-    "power_up_timer": power_up_timer
+    "ball": ball
 }
 
 clock = pygame.time.Clock()
@@ -68,22 +65,25 @@ POWER_UP_TYPES = [
 # Function to activate a random power-up
 def activate_power_up():
     global power_up_active, power_up_timer, power_up_rect
-    # select random power-up type
+
+    # Randomly select a power-up type
     power_up_type = random.choice(POWER_UP_TYPES)
-    # modify attributes depending on type of power up
+
+    # Set power-up attributes based on type
     if power_up_type == "Paddle Size Increase":
         power_up_rect = pygame.Rect(0, 0, power_up_size_increase, power_up_size_increase)
         power_up_rect.center = (window_width // 2, window_height // 2)
         power_up_active = True
         power_up_timer = power_up_duration
+        left_paddle.height += power_up_size_increase
+        right_paddle.height += power_up_size_increase
     elif power_up_type == "Paddle Speed Increase":
         power_up_rect = pygame.Rect(0, 0, power_up_size_increase, power_up_size_increase)
         power_up_rect.center = (window_width // 2, window_height // 2)
         power_up_active = True
         power_up_timer = power_up_duration
-
-    # Send power-up activation message over the network
-    send_data({"type": "power_up", "active": power_up_active, "rect": power_up_rect, "timer": power_up_timer})
+        left_paddle.y -= power_up_speed_increase
+        right_paddle.y -= power_up_speed_increase
 
 # Function to deactivate the active power-up
 def deactivate_power_up():
