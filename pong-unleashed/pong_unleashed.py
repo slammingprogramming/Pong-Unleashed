@@ -336,7 +336,6 @@ while True:
     game_state["ball"] = ball
     if is_host and game_mode == "online":
         send_data(game_state)
-
     if game_mode == "online":
         try:
             if is_host:
