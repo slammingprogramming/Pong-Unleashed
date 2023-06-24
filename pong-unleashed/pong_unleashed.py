@@ -170,7 +170,7 @@ elif mode == "5":
     run_tutorial()
 else:
     print("Invalid choice. Exiting the game.")
-    exit()
+    sys.exit()
 
 if game_mode == "online" and is_host:
     start_server()
