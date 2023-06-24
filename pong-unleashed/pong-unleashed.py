@@ -271,36 +271,26 @@ while True:
 
     if game_mode == "online":
         try:
-            send_data(game_state)
-            received_state = receive_data()
-            if received_state:
-                left_paddle = received_state["left_paddle"]
-                right_paddle = received_state["right_paddle"]
-                ball = received_state["ball"]
-        except:
-            print("Connection lost. Exiting the game.")
-            pygame.quit()
-            sys.exit()
+            received_data = non_blocking_receive(server_socket if is_host else client_socket)
+            if received_data:
+                game_state = pickle.loads(received_data)
+                left_paddle = game_state["left_paddle"]
+                right_paddle = game_state["right_paddle"]
+                ball = game_state["ball"]
+except socket.error as e:
+    print("Socket error:", e)
+    break
 
-    # Power-up logic
-    if not power_up_active:
-        if random.randint(0, 500) == 0:  # Random chance for power-up appearance
-            activate_power_up()
+# Draw the game objects
+window.fill(BLACK)
+pygame.draw.rect(window, WHITE, left_paddle)
+pygame.draw.rect(window, WHITE, right_paddle)
+pygame.draw.ellipse(window, WHITE, ball)
+pygame.draw.aaline(window, WHITE, (window_width // 2, 0), (window_width // 2, window_height))  # Draw the center line
 
-    if power_up_active:
-        power_up_timer -= 1
-        if power_up_timer <= 0:
-            deactivate_power_up()
+if power_up_active:
+    pygame.draw.rect(window, WHITE, power_up_rect)
 
-    # Draw the game elements
-    window.fill(BLACK)
-    pygame.draw.rect(window, WHITE, left_paddle)
-    pygame.draw.rect(window, WHITE, right_paddle)
-    pygame.draw.ellipse(window, WHITE, ball)
-
-    if power_up_active:
-        pygame.draw.rect(window, WHITE, power_up_rect)
-
-    # Update the display
-    pygame.display.update()
-    clock.tick(60)
+# Update the display
+pygame.display.update()
+clock.tick(60)
