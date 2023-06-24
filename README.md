@@ -1,5 +1,5 @@
 # Pong Unleashed
-Latest Version: 0.0.2
+Latest Version: 0.0.3
 
 Pong Unleashed is a classic pong game implemented in Python using the Pygame library. It offers various game modes, including local multiplayer, single-player against CPU, online multiplayer, and a tutorial mode to help players get familiar with the game mechanics.
 
