@@ -33,7 +33,7 @@ ball_y_speed = 3
 ball = pygame.Rect(window_width // 2 - ball_radius // 2, window_height // 2 - ball_radius // 2, ball_radius, ball_radius)
 
 # Set up networking
-HOST = socket.gethostname()  # Get the host name
+HOST = socket.gethostbyname(socket.gethostname())  # Get the host name
 PORT = 12345  # Choose a port number
 server_socket = None
 client_socket = None
@@ -65,7 +65,7 @@ def join_server(server_ip):
 
 def send_data(data):
     if is_host:
-        client_socket.sendall(pickle.dumps(data))
+        server_socket.sendall(pickle.dumps(data))
     else:
         client_socket.sendall(pickle.dumps(data))
 
@@ -252,10 +252,12 @@ def move_cpu_paddle(difficulty):
 while True:
     for event in pygame.event.get():
         if event.type == QUIT:
-            if is_host:
+            if is_host and game_mode == "online":
                 server_socket.close()
-            else:
+            elif not is_host and game_mode == "online":
                 client_socket.close()
+            else:
+                print("Closing offline game session")
             pygame.quit()
             sys.exit()
         elif event.type == KEYDOWN:
@@ -264,7 +266,7 @@ while True:
 
     if not paused:  # Only update game logic if the game is not paused
 
-    keys = pygame.key.get_pressed()
+        keys = pygame.key.get_pressed()
 
     # Move the paddles (Player 1 controls)
     if keys[K_w] and left_paddle.y > 0:
