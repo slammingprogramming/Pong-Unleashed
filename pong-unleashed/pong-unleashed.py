@@ -13,7 +13,7 @@ pygame.init()
 window_width = 640
 window_height = 480
 window = pygame.display.set_mode((window_width, window_height))
-pygame.display.set_caption("Pong")
+pygame.display.set_caption("Pong Unleashed")
 
 # Set up colors
 BLACK = pygame.Color(0, 0, 0)
@@ -107,11 +107,15 @@ elif mode == "2":
     difficulty_level = int(input("Enter difficulty level (1-4): "))
 elif mode == "3":
     game_mode = "online"
+    port_choice = input("Enter the port to host the server on (default: 12345): ")
+    PORT = int(port_choice) if port_choice.isdigit() else PORT
     start_server()
 elif mode == "4":
     game_mode = "online"
     server_ip = input("Enter the server IP address: ")
-    join_server(server_ip)
+    port_choice = input("Enter the port of the server (default: 12345): ")
+    PORT = int(port_choice) if port_choice.isdigit() else PORT
+    join_server(server_ip, PORT)
 else:
     print("Invalid choice. Exiting the game.")
     exit()
