@@ -2,6 +2,8 @@ import pygame
 import socket
 import pickle
 from pygame.locals import *
+import sys
+import select
 
 # Initialize Pygame
 pygame.init()
@@ -60,9 +62,9 @@ def join_server(server_ip):
 
 def send_data(data):
     if is_host:
-        client_socket.send(pickle.dumps(data))
+        client_socket.sendall(pickle.dumps(data))
     else:
-        server_socket.send(pickle.dumps(data))
+        client_socket.sendall(pickle.dumps(data))
 
 def receive_data():
     if is_host:
@@ -96,19 +98,6 @@ if mode == "1":
     game_mode = "local_multiplayer"
 elif mode == "2":
     game_mode = "vs_cpu"
-    print("Select Difficulty Level:")
-    print("1. Easy")
-    print("2. Medium")
-    print("3. Hard")
-    difficulty = input("Enter your choice (1-3): ")
-    if difficulty == "1":
-        paddle_speed = 3
-    elif difficulty == "2":
-        paddle_speed = 5
-    elif difficulty == "3":
-        paddle_speed = 7
-    else:
-        print("Invalid choice. Using medium difficulty.")
 elif mode == "3":
     game_mode = "online"
     start_server()
@@ -120,6 +109,14 @@ else:
     print("Invalid choice. Exiting the game.")
     exit()
 
+# Non-blocking receive function
+def non_blocking_receive(socket_obj):
+    ready = select.select([socket_obj], [], [], 0.01)
+    if ready[0]:
+        return socket_obj.recv(4096)
+    else:
+        return None
+
 while True:
     for event in pygame.event.get():
         if event.type == QUIT:
@@ -128,7 +125,7 @@ while True:
             else:
                 client_socket.close()
             pygame.quit()
-            exit()
+            sys.exit()
 
     keys = pygame.key.get_pressed()
 
@@ -173,11 +170,17 @@ while True:
     game_state["ball"] = ball
 
     if game_mode == "online":
-        send_data(game_state)
-        game_state = receive_data()
-        left_paddle = game_state["left_paddle"]
-        right_paddle = game_state["right_paddle"]
-        ball = game_state["ball"]
+        try:
+            send_data(game_state)
+            received_data = non_blocking_receive(server_socket if is_host else client_socket)
+            if received_data:
+                game_state = pickle.loads(received_data)
+                left_paddle = game_state["left_paddle"]
+                right_paddle = game_state["right_paddle"]
+                ball = game_state["ball"]
+        except socket.error as e:
+            print("Socket error:", e)
+            break
 
     # Draw the game objects
     window.fill(BLACK)
