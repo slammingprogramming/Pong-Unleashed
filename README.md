@@ -134,6 +134,14 @@ Enjoy playing Pong Unleashed with your friends online!
 - Ease of use features (Less quitting constantly, more returning to menu.)
 - Fix the litany of bugs currently in v0.0.2
 - QOL adjustments, such as having the ball go one or the other way depending on 1) random chance, 2) the last player to win serves, or 3) other variables i.e. constantly to one or the other side, as well as other things like paddles and window resizability without breaking things
+-paddle materials, add bounciness and friction coefficients to change how paddles interact with the ball
+-make esc a way to return to menu(if offline in-game or in lobby), return to lobby(if online and in-game), back up in menus, and close the game from the main menu.
+-fix issue with join game ip and port entering
+-fix issue with screen not clearing whenn navigating menus
+-fix issue with server hosting where invalid port is displayed even when a valid port is available. Also, add the default port to screen text and allow user to just leave it blank to go to default.
+-Fix the same issue and add the same default functionality to join game
+ -Fix issue with VS CPU menu that prevents progression.
+-Ensure all event listeners are listening for QUIT
 
 ## License
 
