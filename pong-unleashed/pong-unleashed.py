@@ -84,6 +84,40 @@ def reset_game():
     ball_x_speed = 3
     ball_y_speed = 3
 
+def run_tutorial():
+    tutorial_steps = [
+        "Welcome to Pong Unleashed Tutorial!",
+        "Objective: Use your paddle to hit the ball past your opponent.",
+        "Controls: Player 1 uses 'W' and 'S' keys to move the left paddle.",
+        "Player 2 (CPU) controls the right paddle in this tutorial.",
+        "Step 1: Move your paddle using the 'W' and 'S' keys to intercept the ball.",
+        "Step 2: The ball will bounce off the paddles and walls.",
+        "Step 3: Try to hit the ball past your opponent's paddle to score a point.",
+        "Step 4: The first player to reach 5 points wins the game.",
+        "Congratulations! You have completed the tutorial.",
+        "Feel free to explore other game modes and options."
+    ]
+
+    current_step = 0
+    font = pygame.font.Font(None, 24)
+
+    while True:
+        window.fill(BLACK)
+        text = font.render(tutorial_steps[current_step], True, WHITE)
+        text_rect = text.get_rect(center=(window_width // 2, window_height // 2))
+        window.blit(text, text_rect)
+        pygame.display.update()
+
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == KEYDOWN:
+                if event.key == K_RETURN or event.key == K_SPACE:
+                    current_step += 1
+                    if current_step >= len(tutorial_steps):
+                        return
+
 # Game setup
 reset_game()
 
@@ -94,8 +128,9 @@ print("1. Local Multiplayer")
 print("2. VS CPU")
 print("3. Host")
 print("4. Join")
+print("5. Tutorial")
 
-mode = input("Enter your choice (1-4): ")
+mode = input("Enter your choice (1-5): ")
 
 if mode == "1":
     game_mode = "local_multiplayer"
@@ -123,6 +158,9 @@ elif mode == "4":
     port_choice = input("Enter the port of the server (default: 12345): ")
     PORT = int(port_choice) if port_choice.isdigit() else PORT
     join_server(server_ip, PORT)
+elif mode == "5":
+    game_mode = "tutorial"
+    run_tutorial()
 else:
     print("Invalid choice. Exiting the game.")
     exit()

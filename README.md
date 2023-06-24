@@ -61,8 +61,6 @@ Customizable paddle skins: Allow players to choose different paddle skins or eve
 
 Achievements and rewards: Introduce achievements or unlockable rewards for completing specific challenges or reaching milestones within the game.
 
-Tutorial and training mode: Include a tutorial mode that guides new players through the game mechanics and strategies, as well as a training mode that allows players to practice specific skills and techniques.
-
 ## Acknowledgements
 
 - This game was created using the Pygame library: https://www.pygame.org/
