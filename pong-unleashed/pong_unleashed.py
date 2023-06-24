@@ -57,6 +57,8 @@ def start_server():
     server_socket.listen(1)
     is_host = True
 
+    client_socket, client_address = server_socket.accept()
+
 def join_server(server_ip):
     global client_socket, is_host
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
