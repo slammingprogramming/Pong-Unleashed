@@ -1,11 +1,4 @@
 # Pong Unleashed
- 
-
-To run this code, you'll need to have the Pygame library installed. You can install it using pip:
-
-pip install pygame
-
-# Pong Unleashed
 
 A revitalized version of the classic game "Pong" using Python and Pygame library. The game supports both offline and online multiplayer modes.
 
@@ -40,6 +33,37 @@ A revitalized version of the classic game "Pong" using Python and Pygame library
 - Join: Select the "Join" option and enter the IP address of the host to connect to their game.
 
 Please note that the online multiplayer feature uses a simple host/join system and may not work in all network configurations. Ensure that your network allows incoming connections on the specified port (default: 12345) and that the necessary firewall settings are in place.
+
+## Planned Improvements
+Implement power-ups: Add power-ups that appear during gameplay and provide temporary advantages or disadvantages to the players, such as increasing paddle size, adding extra balls, or slowing down the opponent's paddle.
+
+Sound effects and music: Enhance the gaming experience by adding sound effects for paddle hits, ball collisions, and background music to create a more immersive environment.
+
+Score tracking and win condition: Implement a scoring system to keep track of each player's score and declare a winner when a certain score threshold is reached.
+
+Customizable game settings: Allow players to customize game settings, such as ball speed, paddle speed, paddle size, and game duration, to suit their preferences.
+
+Different ball behaviors: Introduce variations in ball behavior, such as balls that accelerate over time, balls that change direction randomly, or balls that leave a trail behind them.
+
+Multiple game modes: Add different game modes, such as time trial mode (where players try to score as many points as possible within a limited time), obstacle mode (where obstacles obstruct the ball's path), or target mode (where players aim for specific targets on the screen).
+
+Visual effects: Enhance the visual appeal of the game by incorporating particle effects, animations, and dynamic backgrounds.
+
+Difficulty levels: Expand the difficulty levels to provide a gradual progression of challenge, offering options for beginners, intermediate players, and advanced players.
+
+Multiplayer online matchmaking: Implement an online matchmaking system that allows players to compete against opponents of similar skill levels.
+
+High scores and leaderboards: Add a high score system and leaderboards to encourage competition among players and provide a sense of achievement.
+
+AI improvements: Enhance the AI-controlled paddle's behavior by implementing more advanced strategies and decision-making algorithms, making it more challenging and realistic to play against.
+
+Customizable paddle skins: Allow players to choose different paddle skins or even upload their own custom images to personalize their paddles.
+
+Pause and resume functionality: Enable the ability to pause the game and resume it later, allowing players to take breaks or continue their gameplay session at a later time.
+
+Achievements and rewards: Introduce achievements or unlockable rewards for completing specific challenges or reaching milestones within the game.
+
+Tutorial and training mode: Include a tutorial mode that guides new players through the game mechanics and strategies, as well as a training mode that allows players to practice specific skills and techniques.
 
 ## Acknowledgements
 
