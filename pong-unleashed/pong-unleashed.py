@@ -4,6 +4,7 @@ import pickle
 from pygame.locals import *
 import sys
 import select
+import random
 
 # Initialize Pygame
 pygame.init()
@@ -98,6 +99,12 @@ if mode == "1":
     game_mode = "local_multiplayer"
 elif mode == "2":
     game_mode = "vs_cpu"
+    print("Select Difficulty Level:")
+    print("1. Easy - The CPU paddle has a moderate chance of missing the ball.")
+    print("2. Medium - The CPU paddle has a lower chance of missing the ball.")
+    print("3. Hard - The CPU paddle has a very low chance of missing the ball.")
+    print("4. Impossible - The CPU paddle never misses the ball.")
+    difficulty_level = int(input("Enter difficulty level (1-4): "))
 elif mode == "3":
     game_mode = "online"
     start_server()
@@ -116,6 +123,41 @@ def non_blocking_receive(socket_obj):
         return socket_obj.recv(4096)
     else:
         return None
+
+# Move the CPU paddle
+def move_cpu_paddle(difficulty):
+    if difficulty == 1:
+        # Easy difficulty: The CPU paddle moves randomly
+        if random.randint(0, 1) == 0:
+            if right_paddle.y > 0:
+                right_paddle.y -= paddle_speed
+        else:
+            if right_paddle.y < window_height - paddle_height:
+                right_paddle.y += paddle_speed
+    elif difficulty == 2:
+        # Medium difficulty: The CPU paddle tries to follow the ball vertically
+        if ball.y < right_paddle.y:
+            if right_paddle.y > 0:
+                right_paddle.y -= paddle_speed
+        elif ball.y > right_paddle.y + paddle_height:
+            if right_paddle.y < window_height - paddle_height:
+                right_paddle.y += paddle_speed
+    elif difficulty == 3:
+        # Hard difficulty: The CPU paddle tries to predict the ball's position
+        if ball.y < right_paddle.y + paddle_height // 2:
+            if right_paddle.y > 0:
+                right_paddle.y -= paddle_speed
+        elif ball.y > right_paddle.y + paddle_height // 2:
+            if right_paddle.y < window_height - paddle_height:
+                right_paddle.y += paddle_speed
+    elif difficulty == 4:
+        # Impossible difficulty: The CPU paddle never misses the ball
+        if ball.y < right_paddle.y + paddle_height // 2:
+            if right_paddle.y > 0:
+                right_paddle.y -= paddle_speed
+        elif ball.y > right_paddle.y + paddle_height // 2:
+            if right_paddle.y < window_height - paddle_height:
+                right_paddle.y += paddle_speed
 
 while True:
     for event in pygame.event.get():
@@ -143,10 +185,7 @@ while True:
             right_paddle.y += paddle_speed
     elif game_mode == "vs_cpu":
         # Move the CPU paddle (Player 2 controlled by CPU)
-        if ball.y < right_paddle.y:
-            right_paddle.y -= paddle_speed
-        if ball.y > right_paddle.y + paddle_height:
-            right_paddle.y += paddle_speed
+        move_cpu_paddle(difficulty_level)
 
     # Move the ball
     ball.x += ball_x_speed
