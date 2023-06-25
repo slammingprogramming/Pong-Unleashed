@@ -21,7 +21,7 @@ pygame.init()
 # https://github.com/SlammingProgamming/Pong-Unleashed
 
 # Global declaration
-global showMenu, inGame, game_mode, paused, music_volume, current_song
+global showMenu, inGame, game_mode, paused, music_volume, current_song, player1_score, player2_score
 
 # Window vars
 window_width = 960
@@ -70,6 +70,11 @@ right_paddle = pygame.Rect(window_width - 50 - paddle_width_right, window_height
                            paddle_width_right, paddle_height_right)
 ball = pygame.Rect(window_width // 2 - ball_radius // 2, window_height // 2 - ball_radius // 2, ball_radius, ball_radius
                    )
+
+# Set up scoring system
+player1_score = 0
+player2_score = 0
+score_font_size = 18
 
 # Set up game state synchronization
 game_state = {
@@ -348,7 +353,7 @@ def run_tutorial():  # run the tutorial program
 def main():  # Define main
     # Define global variables
     global showMenu, paused, game_mode, is_host, inGame, left_paddle, game_state, right_paddle, ball, ball_x_speed, \
-        ball_y_speed, current_song
+        ball_y_speed, current_song, player1_score, player2_score
     while True:
         while showMenu:  # Contain the menu screen
             font_title = pygame.font.Font(None, title_font_size)
@@ -654,7 +659,11 @@ def main():  # Define main
                 if ball.y <= 0 or ball.y >= window_height - ball_radius:
                     ball_y_speed *= -1
                 # Check if the ball is out of bounds
-                if ball.x < 0 or ball.x > window_width:
+                if ball.x < 0: # if ball goes past left wall
+                    player2_score += 1
+                    reset_game()
+                elif ball.x > window_width: # if ball goes past right wall
+                    player1_score += 1
                     reset_game()
                 # Synchronize game state
                 game_state["left_paddle"] = left_paddle
@@ -682,9 +691,19 @@ def main():  # Define main
                 pygame.draw.rect(window, textColor, right_paddle)
                 pygame.draw.ellipse(window, textColor, ball)
                 pygame.draw.aaline(window, textColor, (window_width // 2, 0), (window_width // 2, window_height))
+                # Draw player scores
+                score_font = pygame.font.Font(None, score_font_size)  # Score font
+                player1_score_text = score_font.render(str(player1_score), True, textColor)  # Render player 1 score
+                player2_score_text = score_font.render(str(player2_score), True, textColor)  # Render player 2 score
+                # Position of player scores
+                player1_score_pos = (20, 20)  # Top left position
+                player2_score_pos = (window_width - player2_score_text.get_width() - 20, 20)  # Top right position
+                # Draw player scores on the screen
+                window.blit(player1_score_text, player1_score_pos)
+                window.blit(player2_score_text, player2_score_pos)
                 # Draw pause message if the game is paused
                 if paused:
-                    font = pygame.font.Font(None, 36)
+                    font = pygame.font.Font(None, options_font_size)
                     text = font.render("Paused", True, textColor)
                     text_rect = text.get_rect(center=(window_width // 2, window_height // 2))
                     window.blit(text, text_rect)

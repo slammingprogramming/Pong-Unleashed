@@ -111,7 +111,7 @@ Enjoy playing Pong Unleashed with your friends online!
 
 - Implement power-ups: Add power-ups that appear during gameplay and provide temporary advantages or disadvantages to the players, such as increasing paddle size, adding extra balls, or slowing down the opponent's paddle.
 - Sound effects and music: Enhance the gaming experience by adding sound effects for paddle hits, and ball collisions to create a more immersive environment.
-- Score tracking and win condition: Implement a scoring system to keep track of each player's score and declare a winner when a certain score threshold is reached.
+- win condition: Implement a scoring system to keep track of each player's score and declare a winner when a certain score threshold is reached.
 - Customizable game settings: Allow players to customize game settings, such as ball speed, paddle speed, paddle size, and game duration, to suit their preferences.
 - Different ball behaviors: Introduce variations in ball behavior, such as balls that accelerate over time, balls that change direction randomly, or balls that leave a trail behind them.
 - Multiple game modes: Add different game modes, such as time trial mode (where players try to score as many points as possible within a limited time), obstacle mode (where obstacles obstruct the ball's path), or target mode (where players aim for specific targets on the screen).
