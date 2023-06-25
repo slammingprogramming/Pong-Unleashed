@@ -21,14 +21,15 @@ pygame.init()
 # https://github.com/slammingprogramming/Pong-Unleashed
 
 # Global declaration
-global showMenu, inGame, game_mode, paused, music_volume, current_song, player1_score, player2_score
+global showMenu, inGame, game_mode, paused, music_volume, current_song, player1_score, player2_score, win_type, \
+    game_over
 
 # Window vars
 window_width = 960
 window_height = 720
 splash_bg = pygame.image.load('images/splash.jpg')
 paused = False
-version_number = "0.1.0"
+version_number = "0.1.1"
 program_name = "Pong Unleashed v" + version_number
 showMenu = True
 inGame = False
@@ -43,6 +44,8 @@ current_song = "music/title_screen_music.mp3"
 # Fonts
 title_font_size = 36
 options_font_size = 24
+winner_text_size = 72
+score_font_size = 18
 
 # Colors
 bgColor = pygame.Color(0, 0, 0)
@@ -74,7 +77,11 @@ ball = pygame.Rect(window_width // 2 - ball_radius // 2, window_height // 2 - ba
 # Set up scoring system
 player1_score = 0
 player2_score = 0
-score_font_size = 18
+player1_rounds_won = 0
+player2_rounds_won = 0
+score_threshold = 5
+win_type = "score_threshold"
+game_over = False
 
 # Set up game state synchronization
 game_state = {
@@ -93,6 +100,7 @@ hostdc_socket = None  # Direct Connect host communication socket
 is_host = None  # Stores if we are the host in a Direct Connect session
 packet_size = 4096  # Sets the packet size in bytes for network communication
 socket_timeout = 0.01
+
 
 # Function to fade out the current song
 def fade_out_song():
@@ -124,6 +132,7 @@ def load_and_play_song():
     else:
         pygame.mixer.music.play(0)
 
+
 # Initialize window, display splash
 
 window = pygame.display.set_mode((window_width, window_height))
@@ -135,6 +144,7 @@ clock = pygame.time.Clock()
 # Load and play title screen music
 current_song = "music/title_screen_music.mp3"
 load_and_play_song()
+
 
 # Networking Functions
 def start_server():  # Start a server on the local device to host a direct connect session
@@ -218,6 +228,7 @@ def move_cpu_paddle(difficulty_level):
             elif ball.y > right_paddle.y + paddle_height_right:
                 if right_paddle.y < window_height - paddle_height_right:
                     right_paddle.y += paddle_speed_right
+
         cpu_paddle_thread = threading.Thread(target=update_paddle_position)
         cpu_paddle_thread.start()
 
@@ -232,6 +243,7 @@ def move_cpu_paddle(difficulty_level):
             elif ball.y > right_paddle.y + paddle_height_right:
                 if right_paddle.y < window_height - paddle_height_right:
                     right_paddle.y += paddle_speed_right
+
         cpu_paddle_thread = threading.Thread(target=update_paddle_position)
         cpu_paddle_thread.start()
     elif difficulty_level == 3:
@@ -257,6 +269,7 @@ def move_cpu_paddle(difficulty_level):
                 elif ball.y > right_paddle.y + paddle_height_right // 2:
                     if right_paddle.y < window_height - paddle_height_right:
                         right_paddle.y += paddle_speed_right
+
         paddle_thread = threading.Thread(target=update_paddle_position)
         paddle_thread.start()
     elif difficulty_level == 4:
@@ -353,9 +366,24 @@ def run_tutorial():  # run the tutorial program
 def main():  # Define main
     # Define global variables
     global showMenu, paused, game_mode, is_host, inGame, left_paddle, game_state, right_paddle, ball, ball_x_speed, \
-        ball_y_speed, current_song, player1_score, player2_score
+        ball_y_speed, current_song, player1_score, player2_score, winner_text, game_over
     while True:
         while showMenu:  # Contain the menu screen
+            if game_over:  # Check if there is a game over condition and display on screen if there is
+                window.fill(bgColor)
+                winner_font = pygame.font.Font(None, winner_text_size)
+                winner_text_rendered = winner_font.render(winner_text, True, textColor)
+                winner_text_width = winner_text_rendered.get_width()
+                winner_text_height = winner_text_rendered.get_height()
+                window.blit(winner_text_rendered, (
+                    window_width // 2 - winner_text_width // 2, window_height // 2 - winner_text_height // 2))
+                pygame.display.flip()
+                pygame.time.delay(5000)
+                player1_score = 0
+                player2_score = 0
+                player1_rounds_won = 0
+                player2_rounds_won = 0
+                game_over = False
             font_title = pygame.font.Font(None, title_font_size)
             font_options = pygame.font.Font(None, options_font_size)
             title_text = font_title.render(program_name, True, textColor)
@@ -397,25 +425,27 @@ def main():  # Define main
                         if selected_option == "1":
                             game_mode = "local_multiplayer"
                             showMenu = False
+                            game_over = False
                         elif selected_option == "2":
                             game_mode = "vs_cpu"
                             showMenu = False
+                            game_over = False
                         elif selected_option == "3":
                             game_mode = "online"
                             is_host = True
                             showMenu = False
+                            game_over = False
                         elif selected_option == "4":
                             game_mode = "online"
                             is_host = False
                             showMenu = False
+                            game_over = False
                         elif selected_option == "5":
                             game_mode = "tutorial"
                             showMenu = False
-                        else:
-                            print("Error: Invalid input passed to examiner. (This shouldn't happen.)")
-                            safe_exit()
+                            game_over = False
         if game_mode == "vs_cpu":
-            font = pygame.font.Font(None, 36)
+            font = pygame.font.Font(None, options_font_size)
             window.fill(bgColor)
             option_texts = [
                 "Easy - The CPU paddle follows the ball with random delay (3 to 10 seconds)",
@@ -451,6 +481,7 @@ def main():  # Define main
                                 safe_exit()
                             else:
                                 global inGame
+                                game_over = False
                                 inGame = True
                         else:
                             error_text = font.render("Invalid option. Please enter a valid option.", True, errorColor)
@@ -659,12 +690,32 @@ def main():  # Define main
                 if ball.y <= 0 or ball.y >= window_height - ball_radius:
                     ball_y_speed *= -1
                 # Check if the ball is out of bounds
-                if ball.x < 0: # if ball goes past left wall
+                if ball.x < 0:  # if ball goes past left wall
                     player2_score += 1
                     reset_game()
-                elif ball.x > window_width: # if ball goes past right wall
+                elif ball.x > window_width:  # if ball goes past right wall
                     player1_score += 1
                     reset_game()
+                # Check for the winning condition, depending on win type
+                if win_type == "score_threshold":
+                    if player1_score >= score_threshold:
+                        winner_text = "Player 1 wins!"
+                        game_over = True
+                        inGame = False
+                        showMenu = True
+                        break
+                    elif player2_score >= score_threshold:
+                        winner_text = "Player 2 wins!"
+                        game_over = True
+                        inGame = False
+                        showMenu = True
+                        break
+                # elif win_type == "time_trial":
+                # elif win_type == "survival":
+                # elif win_type == "rounds":
+                else:
+                    print("Error during win condition selection. Data doesn't match known types.")
+                    safe_exit()
                 # Synchronize game state
                 game_state["left_paddle"] = left_paddle
                 game_state["right_paddle"] = right_paddle

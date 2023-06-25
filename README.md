@@ -1,5 +1,5 @@
 # Pong Unleashed
-Latest Version: 0.1.0
+Latest Version: 0.1.1
 
 Pong Unleashed is a classic pong game implemented in Python using the Pygame library. It offers various game modes, including local multiplayer, single-player against CPU, online multiplayer, and a tutorial mode to help players get familiar with the game mechanics.
 
@@ -135,12 +135,15 @@ Enjoy playing Pong Unleashed with your friends online!
 - Ease of use features (Less quitting constantly, more returning to menu.)
 - Fix the litany of bugs currently in it
 - QOL adjustments, such as having the ball go one or the other way depending on 1) random chance, 2) the last player to win serves, or 3) other variables i.e. constantly to one or the other side, as well as other things like paddles and window resizability without breaking things
--paddle materials, add bounciness and friction coefficients to change how paddles interact with the ball
--make esc a way to return to menu(if offline in-game or in lobby), return to lobby(if online and in-game), back up in menus, and close the game from the main menu.
--fix issue with join game ip and port entering
--fix issue with screen not clearing whenn navigating menus
--fix issue with server hosting where invalid port is displayed even when a valid port is available. Also, add the default port to screen text and allow user to just leave it blank to go to default.
--Fix the same issue and add the same default functionality to join game
+- paddle materials, add bounciness and friction coefficients to change how paddles interact with the ball
+- make esc a way to return to menu(if offline in-game or in lobby), return to lobby(if online and in-game), back up in menus, and close the game from the main menu.
+- fix issue with join game ip and port entering
+- fix issue with screen not clearing whenn navigating menus
+- fix issue with server hosting where invalid port is displayed even when a valid port is available. Also, add the default port to screen text and allow user to just leave it blank to go to default.
+- Fix the same issue and add the same default functionality to join game
+- Time Limit: Set a time limit for the game, and the player with the highest score when the time runs out wins. For instance, the player with the highest score after 2 minutes wins.
+- Lives System: Give each player a certain number of lives, and the first player to lose all their lives loses the game. The opponent is declared the winner. This adds an element of survival to the game.
+- Round-based: Divide the game into multiple rounds, and the player who wins the majority of the rounds wins the game. For example, the first player to win 3 out of 5 rounds is the winner.
 
 ## License
 
