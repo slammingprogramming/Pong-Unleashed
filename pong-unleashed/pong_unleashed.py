@@ -21,18 +21,24 @@ pygame.init()
 # https://github.com/SlammingProgamming/Pong-Unleashed
 
 # Global declaration
-global showMenu, inGame, game_mode, paused
+global showMenu, inGame, game_mode, paused, music_volume, current_song
 
 # Window vars
 window_width = 960
 window_height = 720
 splash_bg = pygame.image.load('images/splash.jpg')
 paused = False
-version_number = "0.0.3"
+version_number = "0.1.0"
 program_name = "Pong Unleashed v" + version_number
 showMenu = True
 inGame = False
 game_mode = None
+music_volume = 0.5
+fade_duration = 2000  # milliseconds
+
+# Create a playlist of songs for inGame and set title screen music as current song
+playlist = ["music/song1.mp3", "music/song2.mp3", "music/song3.mp3"]
+current_song = "music/title_screen_music.mp3"
 
 # Fonts
 title_font_size = 36
@@ -55,8 +61,8 @@ paddle_speed_right = 8
 
 # Ball settings
 ball_radius = 10
-ball_x_speed = random.randint(1, 10)
-ball_y_speed = random.randint(1, 10)
+ball_x_speed = random.randint(4, 10)
+ball_y_speed = random.randint(4, 10)
 
 # Define characteristics of paddles and ball
 left_paddle = pygame.Rect(50, window_height // 2 - paddle_height_left // 2, paddle_width_left, paddle_height_left)
@@ -83,6 +89,36 @@ is_host = None  # Stores if we are the host in a Direct Connect session
 packet_size = 4096  # Sets the packet size in bytes for network communication
 socket_timeout = 0.01
 
+# Function to fade out the current song
+def fade_out_song():
+    for vol in range(int(music_volume * 100), 0, -1):
+        pygame.mixer.music.set_volume(vol / 100)
+        pygame.time.delay(int(fade_duration / (music_volume * 100)))
+
+
+# Function to select a new song from the playlist that is different from the current song
+def change_song():
+    global current_song
+    # Select a new song from the playlist that is different from the current song
+    new_song = random.choice(playlist)
+    while new_song == current_song:
+        new_song = random.choice(playlist)
+    current_song = new_song
+
+
+# Function to load and play the new song and set it to the desired volume level
+def load_and_play_song():
+    pygame.mixer.music.load(current_song)
+    pygame.mixer.music.set_volume(0)
+    for vol in range(int(music_volume * 100)):
+        pygame.mixer.music.set_volume(vol / 100)
+        pygame.time.delay(int(fade_duration / (music_volume * 100)))
+    pygame.mixer.music.set_volume(music_volume)
+    if showMenu:
+        pygame.mixer.music.play(-1)
+    else:
+        pygame.mixer.music.play(0)
+
 # Initialize window, display splash
 
 window = pygame.display.set_mode((window_width, window_height))
@@ -91,6 +127,9 @@ splash_bg = pygame.transform.scale(splash_bg, (window_width, window_height))
 window.blit(splash_bg, (0, 0))
 clock = pygame.time.Clock()
 
+# Load and play title screen music
+current_song = "music/title_screen_music.mp3"
+load_and_play_song()
 
 # Networking Functions
 def start_server():  # Start a server on the local device to host a direct connect session
@@ -143,8 +182,8 @@ def reset_game():  # reset the match on screen
                                paddle_width_right, paddle_height_right)
     ball = pygame.Rect(window_width // 2 - ball_radius // 2, window_height // 2 - ball_radius // 2, ball_radius,
                        ball_radius)
-    ball_x_speed = random.randint(1, 10)
-    ball_y_speed = random.randint(1, 10)
+    ball_x_speed = random.randint(4, 10)
+    ball_y_speed = random.randint(4, 10)
 
 
 def safe_exit():  # safely exit the game and ensure all sockets are closed and servers shut down
@@ -276,6 +315,7 @@ def run_tutorial():  # run the tutorial program
         "In Direct Connect, the Host is Player 1 and the person joining is Player 2.",
         "In Online Play you will be informed if you are currently Player 1 or 2.",
         "In VS CPU, you will be Player 1 and the CPU will be Player 2.",
+        "While in a match you can press M to change song.",
         "Step 1: Move your paddle to intercept the ball.",
         "Step 2: The ball will bounce off the paddles and walls.",
         "Step 3: Try to hit the ball past your opponent's paddle to score a point.",
@@ -308,7 +348,7 @@ def run_tutorial():  # run the tutorial program
 def main():  # Define main
     # Define global variables
     global showMenu, paused, game_mode, is_host, inGame, left_paddle, game_state, right_paddle, ball, ball_x_speed, \
-        ball_y_speed
+        ball_y_speed, current_song
     while True:
         while showMenu:  # Contain the menu screen
             font_title = pygame.font.Font(None, title_font_size)
@@ -563,6 +603,18 @@ def main():  # Define main
                 elif event.type == KEYDOWN:
                     if event.key == K_p and game_mode != "online":
                         paused = not paused  # Toggle pause state when 'P' key is pressed
+                    if event.key == pygame.K_m:
+                        fade_thread = threading.Thread(target=fade_out_song)
+                        fade_thread.start()
+                        change_song()
+                        play_thread = threading.Thread(target=load_and_play_song)
+                        play_thread.start()
+            # Check if the current song has finished playing
+            if not pygame.mixer.music.get_busy():
+                pygame.mixer.music.fadeout(fade_duration)
+                change_song()
+                play_thread = threading.Thread(target=load_and_play_song)
+                play_thread.start()
             if not paused:  # Only update game logic if the game is not paused
                 keys = pygame.key.get_pressed()
                 # Move the paddles (Player 1 controls)

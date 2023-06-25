@@ -1,5 +1,5 @@
 # Pong Unleashed
-Latest Version: 0.0.3
+Latest Version: 0.1.0
 
 Pong Unleashed is a classic pong game implemented in Python using the Pygame library. It offers various game modes, including local multiplayer, single-player against CPU, online multiplayer, and a tutorial mode to help players get familiar with the game mechanics.
 
@@ -11,7 +11,7 @@ Pong Unleashed is a classic pong game implemented in Python using the Pygame lib
 - Multiple game modes to choose from:
   - Local Multiplayer: Play against a friend on the same computer.
   - VS CPU: Challenge yourself against an AI-controlled opponent with adjustable difficulty levels.
-  - Online Multiplayer: Play against a friend over a network by hosting or joining a server.
+  - Online Multiplayer: Play against a friend over a network by hosting or joining a server. (Needs fixing)
   - Tutorial: Learn the game mechanics and rules through a step-by-step tutorial.
 - Various difficulties in CPU-controlled mode to provide a challenging experience.
 - Real-time synchronization of game state in online multiplayer mode.
@@ -59,7 +59,7 @@ To run the game, follow these steps:
 - CPU (Right Paddle):
   - The CPU paddle is controlled by the AI with adjustable difficulty levels or by another player over the network.
 
-## Networking Setup (Online Multiplayer)
+## Networking Setup (Online Multiplayer) (NEEDS FIXING)
 
 To enable online multiplayer functionality in Pong Unleashed, you can set up a server-hosted game or join an existing game server. The game utilizes sockets for network communication and pickle for data serialization. Follow the steps below to configure the networking setup for online multiplayer:
 
@@ -67,7 +67,7 @@ To enable online multiplayer functionality in Pong Unleashed, you can set up a s
 
 2. Decide who will be the host and who will join the game as the client.
 
-### Host Setup
+### Host Setup (NEEDS FIXING)
 
 If you want to host the game, follow these steps:
 
@@ -83,7 +83,7 @@ If you want to host the game, follow these steps:
 
 Note: If you plan to host a server for online multiplayer over the Internet, you will need to configure port forwarding on your router. Port forwarding allows incoming network connections to reach your server. Consult your router's documentation or refer to online resources for guidance on how to set up port forwarding.
 
-### Client Setup
+### Client Setup (NEEDS FIXING)
 
 If you want to join a game as a client, follow these steps:
 
@@ -99,7 +99,7 @@ If you want to join a game as a client, follow these steps:
 
 6. If the provided IP address and port are correct, the game will establish a connection to the server, and you will join the game as a client.
 
-### Online Gameplay
+### Online Gameplay (NEEDS FIXING)
 
 Once the host and client are connected, they can start playing Pong Unleashed together. The game will synchronize the game state between the host and the client, allowing both players to see the same paddles and ball positions.
 
@@ -110,7 +110,7 @@ Enjoy playing Pong Unleashed with your friends online!
 ## Planned Improvements
 
 - Implement power-ups: Add power-ups that appear during gameplay and provide temporary advantages or disadvantages to the players, such as increasing paddle size, adding extra balls, or slowing down the opponent's paddle.
-- Sound effects and music: Enhance the gaming experience by adding sound effects for paddle hits, ball collisions, and background music to create a more immersive environment.
+- Sound effects and music: Enhance the gaming experience by adding sound effects for paddle hits, and ball collisions to create a more immersive environment.
 - Score tracking and win condition: Implement a scoring system to keep track of each player's score and declare a winner when a certain score threshold is reached.
 - Customizable game settings: Allow players to customize game settings, such as ball speed, paddle speed, paddle size, and game duration, to suit their preferences.
 - Different ball behaviors: Introduce variations in ball behavior, such as balls that accelerate over time, balls that change direction randomly, or balls that leave a trail behind them.
@@ -123,7 +123,7 @@ Enjoy playing Pong Unleashed with your friends online!
 - Achievements and rewards: Introduce achievements or unlockable rewards for completing specific challenges or reaching milestones within the game.
 - Support for UPnP for server hosting and matchmaking.
 - Implement server-based multiplayer support and matchmaking.
-- Implement splash screen and GUI
+- Implement GUI
 - Scoring systems
 - Direct connect functionality
 - Settings file
@@ -132,7 +132,7 @@ Enjoy playing Pong Unleashed with your friends online!
 - Something RJ wants
 - Something the first person to ask for a feature wants(as long as it's relevant and reasonable, submit via issues.)
 - Ease of use features (Less quitting constantly, more returning to menu.)
-- Fix the litany of bugs currently in v0.0.2
+- Fix the litany of bugs currently in it
 - QOL adjustments, such as having the ball go one or the other way depending on 1) random chance, 2) the last player to win serves, or 3) other variables i.e. constantly to one or the other side, as well as other things like paddles and window resizability without breaking things
 -paddle materials, add bounciness and friction coefficients to change how paddles interact with the ball
 -make esc a way to return to menu(if offline in-game or in lobby), return to lobby(if online and in-game), back up in menus, and close the game from the main menu.
@@ -144,6 +144,15 @@ Enjoy playing Pong Unleashed with your friends online!
 ## License
 
 Pong Unleashed is licensed under the [GPLv3 License](LICENSE).
+
+### Music Licensing and Credit
+Title Screen Music: The Chosen by Tetuano
+Song 1: Dream Potion by tubebackr
+Song 2: Let's Party by Aylex
+Song 3: Neon Metaphor by ESCP
+
+- All music in this repository is licensed under the [Free To Use License](https://freetouse.com/music/usage-policy)
+- Source: [No Copyright Music (Free Download)](https://freetouse.com/music)
 
 ## Acknowledgements
 
