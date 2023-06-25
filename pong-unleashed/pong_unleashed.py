@@ -16,9 +16,9 @@ pygame.init()
 # This is a project to bring Pong to the modern era, along with a series of other games I'd like
 # to revitalize as part of the larger goal.
 # And of course, thanks for enjoying the game :)
-# Made by SlammingProgramming (https://github.com/SlammingProgamming)
+# Made by SlammingProgramming (https://github.com/slammingprogramming)
 # Source is available on GitHub, this work is licensed under the GPLv3
-# https://github.com/SlammingProgamming/Pong-Unleashed
+# https://github.com/slammingprogramming/Pong-Unleashed
 
 # Global declaration
 global showMenu, inGame, game_mode, paused, music_volume, current_song, player1_score, player2_score

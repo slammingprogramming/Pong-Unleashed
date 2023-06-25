@@ -167,6 +167,6 @@ Contributions to Pong Unleashed are welcome! If you find any bugs or have sugges
 
 ## About
 
-Pong Unleashed was developed by Ashtin Wilkin-Blanchard. You can find more of my projects on [GitHub](https://github.com/SlammingProgamming).
+Pong Unleashed was developed by Ashtin Wilkin-Blanchard. You can find more of my projects on [GitHub](https://github.com/slammingprogramming).
 
 Enjoy playing Pong Unleashed! Have fun!
