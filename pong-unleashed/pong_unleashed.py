@@ -22,31 +22,37 @@ pygame.init()
 
 # Global declaration
 global showMenu, inGame, game_mode, paused, music_volume, current_song, player1_score, player2_score, win_type, \
-    game_over
+    game_over, splash_bg
 
 # Window vars
 window_width = 960
 window_height = 720
 splash_bg = pygame.image.load('images/splash.jpg')
 paused = False
-version_number = "0.1.2"
+version_number = "0.2.0"
 program_name = "Pong Unleashed v" + version_number
+
+# Game vars
 showMenu = True
 inGame = False
 game_mode = None
-music_volume = 0.5
-fade_duration = 2000  # milliseconds
 
 # Create a playlist of songs for inGame and set title screen music as current song
 playlist = ["music/song1.mp3", "music/song2.mp3", "music/song3.mp3"]
 current_song = "music/title_screen_music.mp3"
 
+# Set volumes
+music_volume = 0.5
+fade_duration = 2000  # milliseconds
+sound_volume = 1
+
 # Load sounds
-# paddle_hit_sound = pygame.mixer.Sound('paddle_hit.wav')
-# ball_collision_sound = pygame.mixer.Sound('ball_collision.wav')
-# menu_select_sound = pygame.mixer.Sound('menu_select.wav')
-# win_sound = pygame.mixer.Sound('win_sound.wav')
-# lose_sound = pygame.mixer.Sound('lose_sound.wav')
+paddle_hit_sound = pygame.mixer.Sound('sounds/paddle_hit.wav')
+ball_collision_sound = pygame.mixer.Sound('sounds/ball_collision.wav')
+menu_select_sound = pygame.mixer.Sound('sounds/menu_select.wav')
+win_sound = pygame.mixer.Sound('sounds/win_sound.wav')
+lose_sound = pygame.mixer.Sound('sounds/lose_sound.wav')
+reset_sound = pygame.mixer.Sound('sounds/menu_select.wav')
 
 # Fonts
 title_font_size = 36
@@ -89,6 +95,14 @@ player2_rounds_won = 0
 score_threshold = 5
 win_type = "score_threshold"
 game_over = False
+
+# Set up sound volume
+paddle_hit_sound.set_volume(sound_volume)
+ball_collision_sound.set_volume(sound_volume)
+menu_select_sound.set_volume(sound_volume)
+lose_sound.set_volume(sound_volume)
+win_sound.set_volume(sound_volume)
+
 
 # Set up game state synchronization
 game_state = {
@@ -147,11 +161,7 @@ pygame.display.set_caption(program_name)
 splash_bg = pygame.transform.scale(splash_bg, (window_width, window_height))
 window.blit(splash_bg, (0, 0))
 clock = pygame.time.Clock()
-
-# Load and play title screen music
-current_song = "music/title_screen_music.mp3"
-load_and_play_song()
-
+paddle_hit_sound.play()
 
 # Networking Functions
 def start_server():  # Start a server on the local device to host a direct connect session
@@ -172,6 +182,16 @@ def join_server(connection_ip, PORT):  # Join a server or direct connect
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client_socket.connect((connection_ip, PORT))
     is_host = False
+
+
+def load_title_screen():  # Load and play title screen music and background
+    global window, splash_bg, current_song
+    window = pygame.display.set_mode((window_width, window_height))
+    pygame.display.set_caption(program_name)
+    splash_bg = pygame.transform.scale(splash_bg, (window_width, window_height))
+    window.blit(splash_bg, (0, 0))
+    current_song = "music/title_screen_music.mp3"
+    load_and_play_song()
 
 
 def send_data(data):  # Send data to the client(if hosting direct connect), or to the server/host.
@@ -206,6 +226,21 @@ def reset_game():  # reset the match on screen
                        ball_radius)
     ball_x_speed = random.randint(4, 10)
     ball_y_speed = random.randint(4, 10)
+    directionality = random.randint(0,3)  # Send the ball in one of four directions depending on the results of a
+    # random number roll
+    if directionality == 0: # +/+
+        ball_x_speed = ball_x_speed * 1
+        ball_y_speed = ball_y_speed * 1
+    elif directionality == 1:  # +/-
+        ball_x_speed = ball_x_speed * 1
+        ball_y_speed = ball_y_speed * -1
+    elif directionality == 2:  # -/+
+        ball_x_speed = ball_x_speed * -1
+        ball_y_speed = ball_y_speed * 1
+    elif directionality == 3:  # -/-
+        ball_x_speed = ball_x_speed * -1
+        ball_y_speed = ball_y_speed * -1
+reset_sound.play()
 
 
 def safe_exit():  # safely exit the game and ensure all sockets are closed and servers shut down
@@ -351,7 +386,7 @@ def run_tutorial():  # run the tutorial program
     font = pygame.font.Font(None, options_font_size)
 
     while True:
-        window.fill(bgColor)
+        window.blit(splash_bg, (0, 0))
         text = font.render(tutorial_steps[current_step], True, textColor)
         text_rect = text.get_rect(center=(window_width // 2, window_height // 2))
         window.blit(text, text_rect)
@@ -362,6 +397,7 @@ def run_tutorial():  # run the tutorial program
                 safe_exit()
             elif event.type == KEYDOWN:
                 if event.key == K_RETURN or event.key == K_SPACE:
+                    menu_select_sound.play()
                     current_step += 1
                     if current_step >= len(tutorial_steps):
                         global showMenu, difficulty_level
@@ -374,10 +410,11 @@ def main():  # Define main
     # Define global variables
     global showMenu, paused, game_mode, is_host, inGame, left_paddle, game_state, right_paddle, ball, ball_x_speed, \
         ball_y_speed, current_song, player1_score, player2_score, winner_text, game_over
+    load_title_screen()
     while True:
         while showMenu:  # Contain the menu screen
             if game_over:  # Check if there is a game over condition and display on screen if there is
-                window.fill(bgColor)
+                window.blit(splash_bg, (0, 0))
                 winner_font = pygame.font.Font(None, winner_text_size)
                 winner_text_rendered = winner_font.render(winner_text, True, textColor)
                 winner_text_width = winner_text_rendered.get_width()
@@ -391,6 +428,7 @@ def main():  # Define main
                 player1_rounds_won = 0
                 player2_rounds_won = 0
                 game_over = False
+                load_title_screen()
             font_title = pygame.font.Font(None, title_font_size)
             font_options = pygame.font.Font(None, options_font_size)
             title_text = font_title.render(program_name, True, textColor)
@@ -409,7 +447,7 @@ def main():  # Define main
                     center=(window_width // 2, 100 + i * 30)
                 )
                 option_positions.append(option_pos)
-            window.fill(bgColor)
+            window.blit(splash_bg, (0, 0))
             window.blit(title_text, title_pos)
             for option_text, option_pos in zip(option_texts, option_positions):
                 window.blit(option_text, option_pos)
@@ -422,6 +460,7 @@ def main():  # Define main
                         safe_exit()
                     elif event.type == pygame.KEYDOWN:
                         if event.unicode in valid_options:
+                            menu_select_sound.play()
                             selected_option = event.unicode
                         else:
                             font = pygame.font.Font(None, options_font_size)
@@ -453,7 +492,7 @@ def main():  # Define main
                             game_over = False
         if game_mode == "vs_cpu":
             font = pygame.font.Font(None, options_font_size)
-            window.fill(bgColor)
+            window.blit(splash_bg, (0, 0))
             option_texts = [
                 "Easy - The CPU paddle follows the ball with random delay (3 to 10 seconds)",
                 "Medium - The CPU paddle tracks the ball with some delay.",
@@ -481,6 +520,7 @@ def main():  # Define main
                     if event.type == KEYDOWN:
                         if event.unicode in valid_options:
                             global difficulty_level
+                            menu_select_sound.play()
                             selected_option = event.unicode
                             difficulty_level = int(selected_option)
                             if difficulty_level < 1 or difficulty_level > 6:
@@ -518,6 +558,7 @@ def main():  # Define main
                     if event.type == QUIT:
                         safe_exit()
                     if event.type == KEYDOWN:
+                        paddle_hit_sound.play()  # Play paddle hit sound on keystroke in IP info screen
                         if event.unicode.isdigit():
                             port_choice += event.unicode
                         elif event.key == K_BACKSPACE:
@@ -525,7 +566,7 @@ def main():  # Define main
                         elif event.key == K_RETURN:
                             if port_choice.isdigit() and 1 <= int(port_choice) <= 65535:
                                 valid_input = True
-                        window.fill(bgColor)
+                        window.blit(splash_bg, (0, 0))
                         window.blit(title_text, title_rect)
                         window.blit(host_text, host_rect)
                         window.blit(lan_ip_text, lan_ip_rect)
@@ -551,7 +592,7 @@ def main():  # Define main
             text_height = text_rendered.get_height()
             text_x = (window_width - text_width) // 2
             text_y = (window_height - text_height) // 2
-            window.fill(bgColor)
+            window.blit(splash_bg, (0, 0))
             window.blit(text_rendered, (text_x, text_y))
             pygame.display.flip()
             listen_thread.join()
@@ -562,7 +603,7 @@ def main():  # Define main
             text_height = text_rendered.get_height()
             text_x = (window_width - text_width) // 2
             text_y = (window_height - text_height) // 2
-            window.fill(bgColor)
+            window.blit(splash_bg, (0, 0))
             window.blit(text_rendered, (text_x, text_y))
             pygame.display.flip()
         elif game_mode == "online" and not is_host:
@@ -585,6 +626,7 @@ def main():  # Define main
                     if event.type == QUIT:
                         safe_exit()
                     if event.type == KEYDOWN:
+                        paddle_hit_sound.play()
                         if event.unicode.isdigit():
                             if len(server_ip) < 15:
                                 server_ip += event.unicode
@@ -612,7 +654,7 @@ def main():  # Define main
                         elif event.key == K_BACKSLASH:
                             if not port_choice:
                                 port_choice += "\\"
-                        window.fill(bgColor)
+                        window.blit(splash_bg, (0, 0))
                         window.blit(title_text, title_rect)
                         window.blit(server_ip_text, server_ip_rect)
                         window.blit(port_text, port_rect)
@@ -692,6 +734,7 @@ def main():  # Define main
                 ball.y += ball_y_speed
                 # Ball collision with paddles
                 if ball.colliderect(left_paddle):
+                    paddle_hit_sound.play()
                     if ball.centery < left_paddle.top or ball.centery > left_paddle.bottom:
                         # Ball hit the top or bottom of the left paddle
                         ball_x_speed = abs(ball_x_speed)  # Reverse the x-speed to make the ball move to the right
@@ -701,6 +744,7 @@ def main():  # Define main
                         ball.left = left_paddle.right  # Move the ball to the right of the left paddle
                         ball_x_speed *= -1  # Reverse the x-speed to make the ball move in the opposite direction
                 elif ball.colliderect(right_paddle):
+                    paddle_hit_sound.play()
                     if ball.centery < right_paddle.top or ball.centery > right_paddle.bottom:
                         # Ball hit the top or bottom of the right paddle
                         ball_x_speed = -abs(ball_x_speed)  # Reverse the x-speed to make the ball move to the left
@@ -711,8 +755,8 @@ def main():  # Define main
                         ball_x_speed *= -1  # Reverse the x-speed to make the ball move in the opposite direction
                 # Ball collision with walls
                 if ball.y <= 0 or ball.y >= window_height - ball_radius:
+                    ball_collision_sound.play()
                     ball_y_speed *= -1
-                    # pygame.mixer.Sound.play(ball_collision_sound)
                 # Check if the ball is out of bounds
                 if ball.x < 0:  # if ball goes past left wall
                     player2_score += 1
@@ -724,12 +768,14 @@ def main():  # Define main
                 if win_type == "score_threshold":
                     if player1_score >= score_threshold:
                         winner_text = "Player 1 wins!"
+                        win_sound.play()
                         game_over = True
                         inGame = False
                         showMenu = True
                         break
                     elif player2_score >= score_threshold:
                         winner_text = "Player 2 wins!"
+                        lose_sound.play()
                         game_over = True
                         inGame = False
                         showMenu = True
