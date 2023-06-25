@@ -1,5 +1,5 @@
 # Pong Unleashed
-Latest Version: 0.1.1
+Latest Version: 0.1.2
 
 Pong Unleashed is a classic pong game implemented in Python using the Pygame library. It offers various game modes, including local multiplayer, single-player against CPU, online multiplayer, and a tutorial mode to help players get familiar with the game mechanics.
 
@@ -110,7 +110,6 @@ Enjoy playing Pong Unleashed with your friends online!
 ## Planned Improvements
 
 - Implement power-ups: Add power-ups that appear during gameplay and provide temporary advantages or disadvantages to the players, such as increasing paddle size, adding extra balls, or slowing down the opponent's paddle.
-- Sound effects and music: Enhance the gaming experience by adding sound effects for paddle hits, and ball collisions to create a more immersive environment.
 - win condition: Implement a scoring system to keep track of each player's score and declare a winner when a certain score threshold is reached.
 - Customizable game settings: Allow players to customize game settings, such as ball speed, paddle speed, paddle size, and game duration, to suit their preferences.
 - Different ball behaviors: Introduce variations in ball behavior, such as balls that accelerate over time, balls that change direction randomly, or balls that leave a trail behind them.
@@ -135,10 +134,11 @@ Enjoy playing Pong Unleashed with your friends online!
 - Ease of use features (Less quitting constantly, more returning to menu.)
 - Fix the litany of bugs currently in it
 - QOL adjustments, such as having the ball go one or the other way depending on 1) random chance, 2) the last player to win serves, or 3) other variables i.e. constantly to one or the other side, as well as other things like paddles and window resizability without breaking things
+- make it not break when you grab the window
 - paddle materials, add bounciness and friction coefficients to change how paddles interact with the ball
+- ball materials, add bounciness and friction coefficients to them as well
 - make esc a way to return to menu(if offline in-game or in lobby), return to lobby(if online and in-game), back up in menus, and close the game from the main menu.
 - fix issue with join game ip and port entering
-- fix issue with screen not clearing whenn navigating menus
 - fix issue with server hosting where invalid port is displayed even when a valid port is available. Also, add the default port to screen text and allow user to just leave it blank to go to default.
 - Fix the same issue and add the same default functionality to join game
 - Time Limit: Set a time limit for the game, and the player with the highest score when the time runs out wins. For instance, the player with the highest score after 2 minutes wins.
@@ -150,13 +150,16 @@ Enjoy playing Pong Unleashed with your friends online!
 Pong Unleashed and any of it's assets not otherwise specifically mentioned are licensed under the [GPLv3 License](LICENSE).
 
 ### Music Licensing and Credit
-Title Screen Music: The Chosen by Tetuano
-Song 1: Dream Potion by tubebackr
-Song 2: Let's Party by Aylex
-Song 3: Neon Metaphor by ESCP
+- Title Screen Music: The Chosen by Tetuano
+- Song 1: Dream Potion by tubebackr
+- Song 2: Let's Party by Aylex
+- Song 3: Neon Metaphor by ESCP
 
 - All music in this repository is licensed under the [Free To Use License](https://freetouse.com/music/usage-policy)
 - Source: [No Copyright Music (Free Download)](https://freetouse.com/music)
+
+### Sound Effect Licensing and Credit
+All sounds are from [Pixabay](https://pixabay.com) and fall under the [Pixabay License](https://pixabay.com/service/license-summary/)
 
 ## Acknowledgements
 

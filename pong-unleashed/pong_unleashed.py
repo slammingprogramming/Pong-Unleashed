@@ -29,7 +29,7 @@ window_width = 960
 window_height = 720
 splash_bg = pygame.image.load('images/splash.jpg')
 paused = False
-version_number = "0.1.1"
+version_number = "0.1.2"
 program_name = "Pong Unleashed v" + version_number
 showMenu = True
 inGame = False
@@ -40,6 +40,13 @@ fade_duration = 2000  # milliseconds
 # Create a playlist of songs for inGame and set title screen music as current song
 playlist = ["music/song1.mp3", "music/song2.mp3", "music/song3.mp3"]
 current_song = "music/title_screen_music.mp3"
+
+# Load sounds
+# paddle_hit_sound = pygame.mixer.Sound('paddle_hit.wav')
+# ball_collision_sound = pygame.mixer.Sound('ball_collision.wav')
+# menu_select_sound = pygame.mixer.Sound('menu_select.wav')
+# win_sound = pygame.mixer.Sound('win_sound.wav')
+# lose_sound = pygame.mixer.Sound('lose_sound.wav')
 
 # Fonts
 title_font_size = 36
@@ -684,11 +691,28 @@ def main():  # Define main
                 ball.x += ball_x_speed
                 ball.y += ball_y_speed
                 # Ball collision with paddles
-                if ball.colliderect(left_paddle) or ball.colliderect(right_paddle):
-                    ball_x_speed *= -1
+                if ball.colliderect(left_paddle):
+                    if ball.centery < left_paddle.top or ball.centery > left_paddle.bottom:
+                        # Ball hit the top or bottom of the left paddle
+                        ball_x_speed = abs(ball_x_speed)  # Reverse the x-speed to make the ball move to the right
+                        ball_y_speed *= -1  # Reverse the y-speed to make the ball bounce up or down
+                    elif ball.right > left_paddle.right:
+                        # Ball hit the back of the left paddle
+                        ball.left = left_paddle.right  # Move the ball to the right of the left paddle
+                        ball_x_speed *= -1  # Reverse the x-speed to make the ball move in the opposite direction
+                elif ball.colliderect(right_paddle):
+                    if ball.centery < right_paddle.top or ball.centery > right_paddle.bottom:
+                        # Ball hit the top or bottom of the right paddle
+                        ball_x_speed = -abs(ball_x_speed)  # Reverse the x-speed to make the ball move to the left
+                        ball_y_speed *= -1  # Reverse the y-speed to make the ball bounce up or down
+                    elif ball.left < right_paddle.left:
+                        # Ball hit the back of the right paddle
+                        ball.right = right_paddle.left  # Move the ball to the left of the right paddle
+                        ball_x_speed *= -1  # Reverse the x-speed to make the ball move in the opposite direction
                 # Ball collision with walls
                 if ball.y <= 0 or ball.y >= window_height - ball_radius:
                     ball_y_speed *= -1
+                    # pygame.mixer.Sound.play(ball_collision_sound)
                 # Check if the ball is out of bounds
                 if ball.x < 0:  # if ball goes past left wall
                     player2_score += 1
