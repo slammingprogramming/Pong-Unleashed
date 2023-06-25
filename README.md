@@ -117,6 +117,7 @@ Enjoy playing Pong Unleashed with your friends online!
 - Multiple game modes: Add different game modes, such as time trial mode (where players try to score as many points as possible within a limited time), obstacle mode (where obstacles obstruct the ball's path), or target mode (where players aim for specific targets on the screen).
 - Visual effects: Enhance the visual appeal of the game by incorporating particle effects, animations, and dynamic backgrounds.
 - Difficulty levels: Expand the difficulty levels to provide a gradual progression of challenge, offering options for beginners, intermediate players, and advanced players.
+- Skinning/Theming Support
 - Multiplayer online matchmaking: Implement an online matchmaking system that allows players to compete against opponents of similar skill levels.
 - High scores and leaderboards: Add a high score system and leaderboards to encourage competition among players and provide a sense of achievement.
 - Customizable paddle skins: Allow players to choose different paddle skins or even upload their own custom images to personalize their paddles.
@@ -126,7 +127,7 @@ Enjoy playing Pong Unleashed with your friends online!
 - Implement GUI
 - Scoring systems
 - Direct connect functionality
-- Settings file
+- Settings file and menu
 - Usernames and randomized identifier strings
 - Improved security for multiplayer
 - Something RJ wants
@@ -143,7 +144,7 @@ Enjoy playing Pong Unleashed with your friends online!
 
 ## License
 
-Pong Unleashed is licensed under the [GPLv3 License](LICENSE).
+Pong Unleashed and any of it's assets not otherwise specifically mentioned are licensed under the [GPLv3 License](LICENSE).
 
 ### Music Licensing and Credit
 Title Screen Music: The Chosen by Tetuano
