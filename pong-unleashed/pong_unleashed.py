@@ -29,7 +29,7 @@ window_width = 960
 window_height = 720
 splash_bg = pygame.image.load('images/splash.jpg')
 paused = False
-version_number = "0.2.0"
+version_number = "0.2.1"
 program_name = "Pong Unleashed v" + version_number
 
 # Game vars
@@ -218,7 +218,7 @@ def non_blocking_receive(socket_obj):
 
 
 def reset_game():  # reset the match on screen
-    global left_paddle, right_paddle, ball, ball_x_speed, ball_y_speed
+    global left_paddle, right_paddle, ball, ball_x_speed, ball_y_speed, paused
     left_paddle = pygame.Rect(50, window_height // 2 - paddle_height_left // 2, paddle_width_left, paddle_height_left)
     right_paddle = pygame.Rect(window_width - 50 - paddle_width_right, window_height // 2 - paddle_height_right // 2,
                                paddle_width_right, paddle_height_right)
@@ -240,7 +240,9 @@ def reset_game():  # reset the match on screen
     elif directionality == 3:  # -/-
         ball_x_speed = ball_x_speed * -1
         ball_y_speed = ball_y_speed * -1
-reset_sound.play()
+    reset_sound.play()
+    paused = False
+
 
 
 def safe_exit():  # safely exit the game and ensure all sockets are closed and servers shut down
@@ -400,10 +402,22 @@ def run_tutorial():  # run the tutorial program
                     menu_select_sound.play()
                     current_step += 1
                     if current_step >= len(tutorial_steps):
-                        global showMenu, difficulty_level
+                        global difficulty_level, inGame
                         difficulty_level = 2
-                        showMenu = True
+                        inGame = True
+                        showMenu = False
                         return
+                    # needs fixed so you can get back to the menu if you press esc
+                elif event.key == K_ESCAPE:
+                    menu_select_sound.play()
+                    if current_step > 0:
+                        current_step -=1
+                    if current_step == 0:
+                        showMenu = True
+                        inGame = False
+                        return
+
+
 
 
 def main():  # Define main
@@ -462,6 +476,9 @@ def main():  # Define main
                         if event.unicode in valid_options:
                             menu_select_sound.play()
                             selected_option = event.unicode
+                        elif event.key == K_ESCAPE:
+                            menu_select_sound.play()
+                            safe_exit()
                         else:
                             font = pygame.font.Font(None, options_font_size)
                             error_text = font.render("Invalid option. Please enter a valid option.", True, errorColor)
@@ -530,6 +547,11 @@ def main():  # Define main
                                 global inGame
                                 game_over = False
                                 inGame = True
+                        elif event.key == K_ESCAPE:  # needs fixed so you can go back
+                            menu_select_sound.play()
+                            showMenu = True
+                            inGame = False
+                            return
                         else:
                             error_text = font.render("Invalid option. Please enter a valid option.", True, errorColor)
                             error_rect = error_text.get_rect(center=(window_width // 2, 400))
@@ -561,6 +583,11 @@ def main():  # Define main
                         paddle_hit_sound.play()  # Play paddle hit sound on keystroke in IP info screen
                         if event.unicode.isdigit():
                             port_choice += event.unicode
+                        elif event.key == K_ESCAPE:  # needs fixed so it actually goes back
+                            menu_select_sound.play()
+                            showMenu = True
+                            inGame = False
+                            return
                         elif event.key == K_BACKSPACE:
                             port_choice = port_choice[:-1]
                         elif event.key == K_RETURN:
@@ -630,6 +657,11 @@ def main():  # Define main
                         if event.unicode.isdigit():
                             if len(server_ip) < 15:
                                 server_ip += event.unicode
+                        elif event.key == K_ESCAPE: # needs fixed so you can actually go back
+                            menu_select_sound.play()
+                            showMenu = True
+                            inGame = False
+                            return
                         elif event.key == K_BACKSPACE:
                             server_ip = server_ip[:-1]
                         elif event.key == K_RETURN:
@@ -673,8 +705,6 @@ def main():  # Define main
             join_server(server_ip, PORT)
         elif game_mode == "tutorial":
             run_tutorial()
-            difficulty_level = 1
-            inGame = True
         elif game_mode == "local_multiplayer":
             print("Starting local multiplayer match")
             inGame = True
@@ -688,12 +718,19 @@ def main():  # Define main
                 elif event.type == KEYDOWN:
                     if event.key == K_p and game_mode != "online":
                         paused = not paused  # Toggle pause state when 'P' key is pressed
-                    if event.key == pygame.K_m:
+                        menu_select_sound.play()
+                    elif event.key == pygame.K_m:
                         fade_thread = threading.Thread(target=fade_out_song)
                         fade_thread.start()
                         change_song()
                         play_thread = threading.Thread(target=load_and_play_song)
                         play_thread.start()
+                    elif event.key == K_ESCAPE:
+                        menu_select_sound.play()
+                        showMenu = True
+                        inGame = False
+                        reset_game()
+                        break
             # Check if the current song has finished playing
             if not pygame.mixer.music.get_busy():
                 pygame.mixer.music.fadeout(fade_duration)

@@ -1,5 +1,5 @@
 # Pong Unleashed
-Latest Version: 0.1.2
+Latest Version: 0.2.1
 
 Pong Unleashed is a classic pong game implemented in Python using the Pygame library. It offers various game modes, including local multiplayer, single-player against CPU, online multiplayer, and a tutorial mode to help players get familiar with the game mechanics.
 
@@ -110,7 +110,6 @@ Enjoy playing Pong Unleashed with your friends online!
 ## Planned Improvements
 
 - Implement power-ups: Add power-ups that appear during gameplay and provide temporary advantages or disadvantages to the players, such as increasing paddle size, adding extra balls, or slowing down the opponent's paddle.
-- win condition: Implement a scoring system to keep track of each player's score and declare a winner when a certain score threshold is reached.
 - Customizable game settings: Allow players to customize game settings, such as ball speed, paddle speed, paddle size, and game duration, to suit their preferences.
 - Different ball behaviors: Introduce variations in ball behavior, such as balls that accelerate over time, balls that change direction randomly, or balls that leave a trail behind them.
 - Multiple game modes: Add different game modes, such as time trial mode (where players try to score as many points as possible within a limited time), obstacle mode (where obstacles obstruct the ball's path), or target mode (where players aim for specific targets on the screen).
@@ -132,7 +131,6 @@ Enjoy playing Pong Unleashed with your friends online!
 - Something RJ wants
 - Something the first person to ask for a feature wants(as long as it's relevant and reasonable, submit via issues.)
 - Ease of use features (Less quitting constantly, more returning to menu.)
-- Fix the litany of bugs currently in it
 - QOL adjustments, such as having the ball go one or the other way depending on 1) random chance, 2) the last player to win serves, or 3) other variables i.e. constantly to one or the other side, as well as other things like paddles and window resizability without breaking things
 - make it not break when you grab the window
 - paddle materials, add bounciness and friction coefficients to change how paddles interact with the ball
