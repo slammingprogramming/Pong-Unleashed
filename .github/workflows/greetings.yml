@@ -1,0 +1,16 @@
+name: Greetings
+
+on: [pull_request_target, issues]
+
+jobs:
+  greeting:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+    - uses: actions/first-interaction@v1
+      with:
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        issue-message: "Hey! Thanks for submitting your first issue to Pong Unleashed. We'll look into it ASAP. Keep up the great work!"
+        pr-message: "Awesome! Thanks for your first pull request to Pong Unleashed. We'll review it soon. Keep up the fantastic work!"
