@@ -2,6 +2,7 @@ name: Create Archive
 on: [push]
 jobs:
   build:
+    permissions: write-all
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
@@ -17,3 +18,4 @@ jobs:
         artifacts: "release.zip"
         token: ${{ secrets.GITHUB_TOKEN }}
         tag: "auto"
+        makeLatest: True
