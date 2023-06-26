@@ -103,7 +103,6 @@ menu_select_sound.set_volume(sound_volume)
 lose_sound.set_volume(sound_volume)
 win_sound.set_volume(sound_volume)
 
-
 # Set up game state synchronization
 game_state = {
     "left_paddle": left_paddle,
