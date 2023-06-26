@@ -1,4 +1,5 @@
 import ipaddress
+import os
 import pygame
 import socket
 import pickle
@@ -22,24 +23,37 @@ pygame.init()
 
 # Global declaration
 global showMenu, inGame, game_mode, paused, music_volume, current_song, player1_score, player2_score, win_type, \
-    game_over, splash_bg
+    game_over, splash_bg, player1_rounds_won, player2_rounds_won
 
 # Window vars
 window_width = 960
 window_height = 720
 splash_bg = pygame.image.load('images/splash.jpg')
 paused = False
-version_number = "0.2.1"
+version_number = "0.2.2"
 program_name = "Pong Unleashed v" + version_number
 
 # Game vars
 showMenu = True
 inGame = False
 game_mode = None
+debug = False
 
-# Create a playlist of songs for inGame and set title screen music as current song
-playlist = ["music/song1.mp3", "music/song2.mp3", "music/song3.mp3"]
-current_song = "music/title_screen_music.mp3"
+# Create a playlist of songs in the 'music' directory and set title screen music as current song
+playlist = []
+music_directory = "music"  # Set the directory path
+supported_sound_formats = ["WAV", "MP3", "OGG", "MIDI"]  # Set the supported file extensions for the sound system
+if debug:
+    print("Loading music directory...")
+# Iterate over all files in the directory
+for filename in os.listdir(music_directory):
+    if any(filename.lower().endswith(formats_allowed.lower()) for formats_allowed in supported_sound_formats):
+        # Construct the relative file path and add it to the playlist
+        file_path = os.path.join(music_directory, filename)
+        if debug:
+            print(file_path)
+        playlist.append(file_path)
+current_song = "music/Tetuano - The Chosen (freetouse.com).mp3"
 
 # Set volumes
 music_volume = 0.5
@@ -147,10 +161,7 @@ def load_and_play_song():
         pygame.mixer.music.set_volume(vol / 100)
         pygame.time.delay(int(fade_duration / (music_volume * 100)))
     pygame.mixer.music.set_volume(music_volume)
-    if showMenu:
-        pygame.mixer.music.play(-1)
-    else:
-        pygame.mixer.music.play(0)
+    pygame.mixer.music.play(0)
 
 
 # Initialize window, display splash
@@ -161,6 +172,7 @@ splash_bg = pygame.transform.scale(splash_bg, (window_width, window_height))
 window.blit(splash_bg, (0, 0))
 clock = pygame.time.Clock()
 paddle_hit_sound.play()
+
 
 # Networking Functions
 def start_server():  # Start a server on the local device to host a direct connect session
@@ -189,8 +201,17 @@ def load_title_screen():  # Load and play title screen music and background
     pygame.display.set_caption(program_name)
     splash_bg = pygame.transform.scale(splash_bg, (window_width, window_height))
     window.blit(splash_bg, (0, 0))
-    current_song = "music/title_screen_music.mp3"
+    change_song()
     load_and_play_song()
+
+
+def check_music():  # Check if music is still playing and play the next song if it isn't
+    # Check if the current song has finished playing and play next if it has
+    if not pygame.mixer.music.get_busy():
+        pygame.mixer.music.fadeout(fade_duration)
+        change_song()
+        play_thread = threading.Thread(target=load_and_play_song)
+        play_thread.start()
 
 
 def send_data(data):  # Send data to the client(if hosting direct connect), or to the server/host.
@@ -225,9 +246,9 @@ def reset_game():  # reset the match on screen
                        ball_radius)
     ball_x_speed = random.randint(4, 10)
     ball_y_speed = random.randint(4, 10)
-    directionality = random.randint(0,3)  # Send the ball in one of four directions depending on the results of a
+    directionality = random.randint(0, 3)  # Send the ball in one of four directions depending on the results of a
     # random number roll
-    if directionality == 0: # +/+
+    if directionality == 0:  # +/+
         ball_x_speed = ball_x_speed * 1
         ball_y_speed = ball_y_speed * 1
     elif directionality == 1:  # +/-
@@ -242,6 +263,13 @@ def reset_game():  # reset the match on screen
     reset_sound.play()
     paused = False
 
+
+def reset_scoring():  # Reset scoring system as needed (i.e. on return to Title Screen)
+    global player1_score, player2_score, player1_rounds_won, player2_rounds_won
+    player1_score = 0
+    player2_score = 0
+    player1_rounds_won = 0
+    player2_rounds_won = 0
 
 
 def safe_exit():  # safely exit the game and ensure all sockets are closed and servers shut down
@@ -387,6 +415,7 @@ def run_tutorial():  # run the tutorial program
     font = pygame.font.Font(None, options_font_size)
 
     while True:
+        check_music()
         window.blit(splash_bg, (0, 0))
         text = font.render(tutorial_steps[current_step], True, textColor)
         text_rect = text.get_rect(center=(window_width // 2, window_height // 2))
@@ -410,13 +439,11 @@ def run_tutorial():  # run the tutorial program
                 elif event.key == K_ESCAPE:
                     menu_select_sound.play()
                     if current_step > 0:
-                        current_step -=1
+                        current_step -= 1
                     if current_step == 0:
                         showMenu = True
                         inGame = False
                         return
-
-
 
 
 def main():  # Define main
@@ -425,7 +452,10 @@ def main():  # Define main
         ball_y_speed, current_song, player1_score, player2_score, winner_text, game_over
     load_title_screen()
     while True:
+        check_music()
         while showMenu:  # Contain the menu screen
+            check_music()
+            reset_scoring()
             if game_over:  # Check if there is a game over condition and display on screen if there is
                 window.blit(splash_bg, (0, 0))
                 winner_font = pygame.font.Font(None, winner_text_size)
@@ -436,10 +466,6 @@ def main():  # Define main
                     window_width // 2 - winner_text_width // 2, window_height // 2 - winner_text_height // 2))
                 pygame.display.flip()
                 pygame.time.delay(5000)
-                player1_score = 0
-                player2_score = 0
-                player1_rounds_won = 0
-                player2_rounds_won = 0
                 game_over = False
                 load_title_screen()
             font_title = pygame.font.Font(None, title_font_size)
@@ -468,6 +494,7 @@ def main():  # Define main
             valid_options = ["1", "2", "3", "4", "5"]
             selected_option = None
             while not selected_option:
+                check_music()
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         safe_exit()
@@ -530,6 +557,7 @@ def main():  # Define main
             valid_options = ["1", "2", "3", "4", "5", "6"]
             selected_option = None
             while not selected_option:
+                check_music()
                 for event in pygame.event.get():
                     if event.type == QUIT:
                         safe_exit()
@@ -574,6 +602,7 @@ def main():  # Define main
             valid_input = False
             port_choice = ""
             while not valid_input:
+                check_music()
                 global PORT
                 for event in pygame.event.get():
                     if event.type == QUIT:
@@ -648,6 +677,7 @@ def main():  # Define main
             server_ip = ""
             port_choice = ""
             while not valid_input:
+                check_music()
                 for event in pygame.event.get():
                     if event.type == QUIT:
                         safe_exit()
@@ -656,7 +686,7 @@ def main():  # Define main
                         if event.unicode.isdigit():
                             if len(server_ip) < 15:
                                 server_ip += event.unicode
-                        elif event.key == K_ESCAPE: # needs fixed so you can actually go back
+                        elif event.key == K_ESCAPE:  # needs fixed so you can actually go back
                             menu_select_sound.play()
                             showMenu = True
                             inGame = False
@@ -711,6 +741,7 @@ def main():  # Define main
             print("Invalid input passed to game mode interpreter. Crashing.")
             safe_exit()
         while inGame:
+            check_music()
             for event in pygame.event.get():
                 if event.type == QUIT:
                     safe_exit()
@@ -728,14 +759,9 @@ def main():  # Define main
                         menu_select_sound.play()
                         showMenu = True
                         inGame = False
+                        reset_scoring()
                         reset_game()
                         break
-            # Check if the current song has finished playing
-            if not pygame.mixer.music.get_busy():
-                pygame.mixer.music.fadeout(fade_duration)
-                change_song()
-                play_thread = threading.Thread(target=load_and_play_song)
-                play_thread.start()
             if not paused:  # Only update game logic if the game is not paused
                 keys = pygame.key.get_pressed()
                 # Move the paddles (Player 1 controls)

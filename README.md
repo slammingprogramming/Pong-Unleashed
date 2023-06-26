@@ -1,5 +1,5 @@
 # Pong Unleashed
-Latest Version: 0.2.1
+Latest Version: 0.2.2
 
 Pong Unleashed is a classic pong game implemented in Python using the Pygame library. It offers various game modes, including local multiplayer, single-player against CPU, online multiplayer, and a tutorial mode to help players get familiar with the game mechanics.
 
@@ -148,10 +148,21 @@ Enjoy playing Pong Unleashed with your friends online!
 Pong Unleashed and any of it's assets not otherwise specifically mentioned are licensed under the [GPLv3 License](LICENSE).
 
 ### Music Licensing and Credit
-- Title Screen Music: The Chosen by Tetuano
-- Song 1: Dream Potion by tubebackr
-- Song 2: Let's Party by Aylex
-- Song 3: Neon Metaphor by ESCP
+- The Chosen by Tetuano
+- Dream Potion by tubebackr
+- Let's Party by Aylex
+- Neon Metaphor by ESCP
+- 80s by Aylex
+- Thrilled by Pufino
+- Love by Amine Maxwell
+- Sunset Chaser by Ethan Sturock
+- Absent by Pufino
+- Longing by Pufino
+- Fantasy by Pufino
+- Meticulous by Pufino
+- Breath by Rabbit Theft
+- Sweet Talks by Limujii
+- Nothing by Damtaro
 
 - All music in this repository is licensed under the [Free To Use License](https://freetouse.com/music/usage-policy)
 - Source: [No Copyright Music (Free Download)](https://freetouse.com/music)
