@@ -1,5 +1,5 @@
 # Pong Unleashed
-Latest Version: 0.2.2
+Latest Version: 0.3.0
 
 Pong Unleashed is a classic pong game implemented in Python using the Pygame library. It offers various game modes, including local multiplayer, single-player against CPU, online multiplayer, and a tutorial mode to help players get familiar with the game mechanics.
 
@@ -142,6 +142,7 @@ Enjoy playing Pong Unleashed with your friends online!
 - Time Limit: Set a time limit for the game, and the player with the highest score when the time runs out wins. For instance, the player with the highest score after 2 minutes wins.
 - Lives System: Give each player a certain number of lives, and the first player to lose all their lives loses the game. The opponent is declared the winner. This adds an element of survival to the game.
 - Round-based: Divide the game into multiple rounds, and the player who wins the majority of the rounds wins the game. For example, the first player to win 3 out of 5 rounds is the winner.
+- Game, Set, Match: Divide the game into sets.
 
 ## License
 
@@ -187,3 +188,49 @@ Contributions to Pong Unleashed are welcome! If you find any bugs or have sugges
 Pong Unleashed was developed by Ashtin Wilkin-Blanchard. You can find more of my projects on [GitHub](https://github.com/slammingprogramming).
 
 Enjoy playing Pong Unleashed! Have fun!
+
+
+- changed the way paddles move
+- changed AI behavior
+- added custom choice of reaction time for AI
+- Refactored code to make it clearer and easier to read and work with
+- Added comments throughout as needed
+- Added debug terminal output for help with debugging
+- Beginnings of skinning support coming along
+
+need to fix the paddle movement first, almost there just need to figure out the buggy paddle movement and the buggy ball friction impartment
+need to fix the ai code so it all uses the proper functions now and change how each ai behaves to:
+now all the ai code needs is logic to be adjusted to follow the new level descriptions and for it to factor in the velocity of the paddle to ensure it reaches its target position accurately.
+
+Beginner:
+The CPU paddle will follow the ball but with a slight reaction time delay, making it easier for the player to hit the ball.
+The CPU paddle may not react as quickly to sudden changes in the ball's direction.
+
+Intermediate:
+The CPU paddle will try to predict where the ball will land based on its current trajectory and speed.
+The CPU paddle will not factor in the presence of walls, making it susceptible to missing the ball if it bounces off the walls.
+
+Advanced:
+The CPU paddle will predict where the ball will land, taking into account the presence of walls and their effect on the ball's trajectory.
+The CPU paddle will adjust its position to intercept the ball more accurately, considering the ball's angle after bouncing off the walls.
+
+Expert:
+The CPU paddle will actively try to speed up the ball using friction when it hits the paddle, making the game more challenging for the player.
+The CPU paddle will predict the ball's intercept point and adjust its position accordingly, maximizing the chances of hitting the ball.
+
+Legendary:
+In addition to the factors in the expert level, the CPU paddle will also anticipate the player's moves and try to hit the ball away from the player's paddle.
+The CPU paddle may employ advanced strategies such as spin shots, curved shots, or deceptive shots to make it even more challenging for the player.
+
+Impossible:
+The CPU paddle will exhibit superhuman abilities, making it virtually impossible for the player to win.
+The CPU paddle may have lightning-fast reaction times(Ignores reaction time set), perfect accuracy, and the ability to counter any shot from the player with ease.
+
+Next version: skinning & settings update (add fonts to skinning support, add settings file, add skin settings file, make a separate repo for skins to fork of the default theme, add colors to skin settings, add text positions to skin settings, 
+After that: RJ Update (Skin with his adjustments made to it)
+After That: Materials Update (- changed the way walls interact with the ball, change how paddles interact with the ball, need to add bounciness to each and change collision to change x movement based on that, need to add wall bounciness and change collision to change y movement based on that, need to add wall friction to change x movement based on that, )
+
+Too Hot by Aylex - online win screen
+Breath - Rabbit Theft for online start screen
+
+cut fighter - aylex
